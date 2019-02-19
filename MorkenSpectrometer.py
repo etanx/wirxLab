@@ -2,9 +2,8 @@
 # -*- coding: iso-8859-1 -*-
 
 """
-
 Created by Michael Morken, April 2015.
-Revised Ellie Tan, May 2019.
+Revised by Ellie Tan, May 2019.
 
 With Anaconda, tkinter should be installed by default. Only pyserial module needs
 to be installed.
@@ -41,6 +40,7 @@ class simpleapp_tk(Tkinter.Tk):
         self.arduinoSerialPortVariable = Tkinter.StringVar()
         arduinoSerialPort = Tkinter.Label(self,textvariable = self.arduinoSerialPortVariable,anchor='w')
         arduinoSerialPort.grid(column=0,row=1,columnspan=3,sticky='EW')
+        
 
         #Setting Up the Grating Select Part
         selectGratingLabel = Tkinter.Label(self,text = 'Select One of The Available Gratings:') #Fixed Select Grating Label
@@ -72,10 +72,6 @@ class simpleapp_tk(Tkinter.Tk):
         label.grid(column=0,row=10,columnspan=1,sticky='EW')
         self.labelVariable.set(u"Hello !")
         '''
-
-        #Setting up the Change Grating Part
-
-        #Setting up the Change Wavelength Part
 
         #Wavelength Enter Box
         self.wavelengthEntry = Tkinter.StringVar()
@@ -114,6 +110,7 @@ class simpleapp_tk(Tkinter.Tk):
         self.wavelengthBox.selection_range(0, Tkinter.END)
         '''
 
+
     #Changing wavelength Functions
     def wavelengthEnter(self,event):
         try:
@@ -121,9 +118,9 @@ class simpleapp_tk(Tkinter.Tk):
             self.wavelengthBox.focus_set()
             self.wavelengthBox.selection_range(0, Tkinter.END)
             global ser
-            ser.write(str(self.wavelengthEntry.get()))
+            ser.write(str.encode(self.wavelengthEntry.get()))
         except:
-            tkMessageBox.showwarning("Not Connected!", "Please check connection to arduino and try again!")
+            tkMessageBox.showwarning("Not Connected!", "E1: Please check connection to arduino and try again!")
             self.wavelengthStatusVariable.set(u"No Wavelength Selected")
 
     def changeWavelength(self):
@@ -133,9 +130,9 @@ class simpleapp_tk(Tkinter.Tk):
             self.wavelengthBox.focus_set()
             self.wavelengthBox.selection_range(0, Tkinter.END)
             global ser
-            ser.write('N')
+            ser.write(str.encode('N'))
         except:
-            tkMessageBox.showwarning("Not Connected!", "Please check connection to arduino and try again!")
+            tkMessageBox.showwarning("Not Connected!", "E2: Please check connection to arduino and try again!")
             self.wavelengthStatusVariable.set(u"No Wavelength Selected")
 
     def changeGrating(self):
@@ -145,13 +142,15 @@ class simpleapp_tk(Tkinter.Tk):
             self.wavelengthBox.focus_set()
             self.wavelengthBox.selection_range(0, Tkinter.END)
             global ser
-            ser.write('Y')
+            ser.write(str.encode('Y'))
         except:
-            tkMessageBox.showwarning("Not Connected!", "Please check connection to arduino and try again!")
+            tkMessageBox.showwarning("Not Connected!", "E3: Please check connection to arduino and try again!")
             self.wavelengthStatusVariable.set(u"No Wavelength Selected")
         
     def callback(self):
         pass
+    
+    
     
     #Arduino Connection Function
     def arduinoConnect(self):
@@ -163,7 +162,6 @@ class simpleapp_tk(Tkinter.Tk):
                 try:
                     global ser
                     ser = serial.Serial(device,9600)
-                    #print(ser)
                     self.arduinoConnectionVariable.set("Connected")
                     self.arduinoSerialPortVariable.set("Serial Port: " + device)
                     dummyVariable=1
@@ -175,20 +173,22 @@ class simpleapp_tk(Tkinter.Tk):
                 break
             else:
                 self.arduinoConnectionVariable.set("Not Connected")
-                tkMessageBox.showwarning("Not Connected!", "Please check connection to arduino and try again!")
+                tkMessageBox.showwarning("Not Connected!", "E4: Please check connection to arduino and try again!")
                 ser=''
                 break
+            
+            
+            
     #Grating Functions
     def grating1800(self):
         try:
             self.gratingStatusVariable.set("Selecting the 1800 grating")
             self.wavelengthStatusVariable.set("Now Enter a New Value for Wavelength")
             global ser
-            #print(ser)
-            ser.write('1800')
+            ser.write(str.encode('1800'))
             #time.sleep(60)
         except:
-            tkMessageBox.showwarning("Not Connected!", "Please check connection to arduino and try again!")
+            tkMessageBox.showwarning("Not Connected!", "E5: Please check connection to arduino and try again!")
             self.gratingStatusVariable.set("No Grating Selected")
             
     def grating150(self):
@@ -196,10 +196,10 @@ class simpleapp_tk(Tkinter.Tk):
             self.gratingStatusVariable.set("Selecting the 150 grating")
             self.wavelengthStatusVariable.set("Now Enter a New Value for Wavelength")
             global ser
-            ser.write('150')
+            ser.write(str.encode('150'))
             #time.sleep(60)
         except:
-            tkMessageBox.showwarning("Not Connected!", "Please check connection to arduino and try again!")
+            tkMessageBox.showwarning("Not Connected!", "E6: Please check connection to arduino and try again!")
             self.gratingStatusVariable.set("No Grating Selected")
 
     def grating3600(self):
@@ -207,10 +207,10 @@ class simpleapp_tk(Tkinter.Tk):
             self.gratingStatusVariable.set("Selecting the 3600 grating")
             self.wavelengthStatusVariable.set("Now Enter a New Value for Wavelength")
             global ser
-            ser.write('3600')
+            ser.write(str.encode('3600'))
  #           time.sleep(60)
         except:
-            tkMessageBox.showwarning("Not Connected!", "Please check connection to arduino and try again!")
+            tkMessageBox.showwarning("Not Connected!", "E7: Please check connection to arduino and try again!")
             self.gratingStatusVariable.set("No Grating Selected")
 
     
