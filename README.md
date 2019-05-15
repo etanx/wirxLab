@@ -1,6 +1,11 @@
 # wirxLab 
 A collection of software and functions. Please update this file when you rename or add functions! Download GitHub for Desktop, clone this repository, and add the folder to your MATLAB path. After making edits to the code, remember to commit changes and push changes to origin/master!
 
+
+**fastsmooth.m** Smoothens spiky signal by taking averages across points.
+
+**shotParams.m** Extract or calculate important parameter values for a shot.
+
 ## CCD Imaging
 
 **img_raw2jpg.m** Reads .b16 files exported from PCO CamWare and saves .jpg image.
