@@ -26,6 +26,14 @@ function varargout = PPD_view(varargin)
 % Edit the above text to modify the response to help PPD_view
 % Last Modified by GUIDE v2.5 21-Apr-2011 14:25:01
 %
+% FUTURE WORK / TO FIX:
+% Software will throw errors about arrays if calling older shot data pre-2015.
+%
+
+
+
+
+
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
