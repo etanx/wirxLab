@@ -4,7 +4,7 @@ A collection of software and functions. Please update this file when you rename 
 
 **fastsmooth.m** Smoothens spiky signal by taking averages across points.
 
-**shotParams.m** Extract or calculate important parameter values for a shot.
+**shotData.m** Extract or calculate important parameter values for a shot.
 
 ## CCD Imaging
 
