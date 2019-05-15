@@ -102,6 +102,7 @@ st = handles.stpt;
 xx = [];
 zz = [];
 
+% vertical PPDs
 cont_data = [];
 mdsclose();
 mdsopen('wirxtree', handles.shot);
