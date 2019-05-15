@@ -12,7 +12,7 @@ function [vel,linex, lineticks] = PPD2vel(shot, TimePoints)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-time = (1:8000) + 5000; %array of time index points that begins at plasma start time.
+
 TimePoints = TimePoints; %time points selected for analysis by user where 1 is at plasma start and 8000 is maximum
 smoothing = 5;   %Number of points to smooth the PPD data
 
