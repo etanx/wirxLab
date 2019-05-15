@@ -1,4 +1,4 @@
-% A script to extract shot parameters and compare them
+% A script to extract shot data with MDSPlus
 % Elizabeth H. Tan, 15 May 2019.
 
 % example usage: 
@@ -8,6 +8,8 @@
 % Maybe combine or make it used by PPD2vel.m?
 % Add a 'save' feature to save MDSPlus data as mat files
 % Add calculations of key plasma parameters?
+% Copy code from PPD_horizontal to extract PPD data
+% Eventually when ICCD Images are added to wirxtree, add a function to extract the arrays for ICCD images.
 
 clear all
 
