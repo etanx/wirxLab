@@ -1,6 +1,16 @@
 function [vel,linex, lineticks] = PPD2vel(shot, TimePoints)
+
+% A function to extract the event velocity from a PPD image.
 % example:
 % PPD_horizontal(1190219019, [4800:5300], [0 0.36846]);
+% Elizabeth H. Tan, 15 May 2019.
+
+%% LOG AND FUTURE WORK:
+% Maybe simplify to only the click-extract section? Getting PPD data out of MDPlus tree can be delegated to shotData.m -ET
+% Script may have problems dealing with PPD arrays from older shots (pre-2015). Same as problem from PPD_view program.
+% Figure how to extract multiple timepoint sections from same shot, since you can't just zoom in on a figure to select events.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 time = (1:8000) + 5000; %array of time index points that begins at plasma start time.
 TimePoints = TimePoints; %time points selected for analysis by user where 1 is at plasma start and 8000 is maximum
