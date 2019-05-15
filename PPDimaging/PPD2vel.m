@@ -2,7 +2,7 @@ function [vel,linex, lineticks] = PPD2vel(shot, TimePoints)
 
 % A function to extract the event velocity from a PPD image.
 % example:
-% PPD_horizontal(1190219019, [4800:5300], [0 0.36846]);
+% [vel,linex, lineticks] = PPD2vel(1190219019, [48000:53000]);
 % Elizabeth H. Tan, 15 May 2019.
 
 %% LOG AND FUTURE WORK:
@@ -93,7 +93,7 @@ i=1;
    
    if max(button)< 3
     hold on;
-    f=plot([linex(i,:)],[lineticks(i,:)],'kx-','LineWidth',2);
+    f=plot([linex(i,:)],[lineticks(i,:)],'kx-','LineWidth',1.2);
    end
    i = i+1;
  end
