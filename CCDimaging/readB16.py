@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
-
-This is a temporary script file.
+This script needs to be upgraded to be a robust function.
 """
 
 from pco_tools import pco_reader as pco
