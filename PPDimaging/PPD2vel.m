@@ -1,4 +1,4 @@
-function [vel,linex, lineticks] = PPD2vel(shot, TimePoints)
+function [vel,linex, lineT] = PPD2vel(shot, TimePoints)
 
 % A function to extract the event velocity from a PPD image.
 % example:
@@ -86,26 +86,26 @@ i=1;
  disp('Collecting slope points...')
  while max(button) <3   % read ginputs until a mouse right-button to stop
    
-   [linex(i,1),lineticks(i,1),button(i,1)] = ginput(1);
-   [linex(i,2),lineticks(i,2),button(i,2)] = ginput(1);
+   [linex(i,1),lineT(i,1),button(i,1)] = ginput(1);
+   [linex(i,2),lineT(i,2),button(i,2)] = ginput(1);
    
    disp(i)
    
    if max(button)< 3
     hold on;
-    f=plot([linex(i,:)],[lineticks(i,:)],'kx-','LineWidth',1.2);
+    f=plot([linex(i,:)],[lineT(i,:)],'kx-','LineWidth',1.2);
    end
    i = i+1;
  end
 
 disp('Calculating velocity...')
 dx = linex(:,1)-linex(:,2);
-dt = (lineticks(:,1)-lineticks(:,2)); % ticks to seconds
+dt = (lineT(:,1)-lineT(:,2)); % ticks to seconds
 vel = dx./dt;
 
 %remove last line which is the 'right click to end' pair
 vel = vel(1:end-1);
-lineticks = lineticks(1:end-1,:);
+lineT = lineT(1:end-1,:);
 linex = linex(1:end-1,:);
 
 fprintf('Average velocity %4.1f km/s \n',mean(vel)/1000)
