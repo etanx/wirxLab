@@ -2,7 +2,7 @@ function [vel,linex, lineT] = PPD2vel(shot, TimePoints)
 
 % A function to extract the event velocity from a PPD image.
 % example:
-% [vel,linex, lineticks] = PPD2vel(1190219019, [48000:53000]);
+% [vel,linex, lineT] = PPD2vel(1190219019, [48000:53000]);
 % Elizabeth H. Tan, 15 May 2019.
 
 %% LOG AND FUTURE WORK:
@@ -14,7 +14,7 @@ function [vel,linex, lineT] = PPD2vel(shot, TimePoints)
 
 
 TimePoints = TimePoints; %time points selected for analysis by user where 1 is at plasma start and 8000 is maximum
-smoothing = 5;   %Number of points to smooth the PPD data
+smoothing = 3;   %Number of points to smooth the PPD data
 
 cont_data = []; %empty array to put PPD data into
 mdsclose();
