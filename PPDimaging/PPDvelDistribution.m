@@ -27,12 +27,17 @@ load(filepath)
 v_avg(i) = mean(vel);
 dv_avg(i) = std(vel./1e5)./sqrt(length(FileList));
 
+% FUTURE: make function save other parameters also
+mean(Icoil);
+mean(Idis);
+mean(Vdis);
+
+
 % FUTURE: Compile list of shots and other parameters from all the files
 % too?
 
 % combine new data into array
 velocities = cat(1,velocities,vel);
-
 
 end
 
