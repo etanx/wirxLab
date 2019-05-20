@@ -27,10 +27,12 @@ load(filepath)
 v_avg(i) = mean(vel);
 dv_avg(i) = std(vel./1e5)./sqrt(length(FileList));
 
-% FUTURE: Compiple list of shots and other parameters from all the files too!
+% FUTURE: Compile list of shots and other parameters from all the files
+% too?
 
 % combine new data into array
 velocities = cat(1,velocities,vel);
+
 
 end
 
