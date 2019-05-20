@@ -50,7 +50,7 @@ A collection of software and functions. Please update this file when you rename 
 
 **Temp.m** Calculate temperature based on emission spectra. Calibration images needed.
 
-**fwhm2Ne.m** Calculate n_e from FWHM of spectra.
+**fwhm2Ne.m** Calculate n_e (electron density) from FWHM of spectra.
 
 **spectraFWHM.m** Calculate FWHM based on emission spectra
 
