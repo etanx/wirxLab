@@ -1,4 +1,14 @@
 function [ width_px, width_nm ] = spectraFWHM( firstSpectraPaths )
+
+
+
+
+%UPDATE: See new script Density.m
+
+
+
+
+
 %Gets the FWHM in pixels... This is a very imperfect rough check with the
 %model
 % Gets FWHM at all costs

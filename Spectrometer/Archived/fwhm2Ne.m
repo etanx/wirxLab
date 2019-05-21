@@ -1,4 +1,13 @@
 function [ n_e ] = fwhm2Ne( fwhm_raw )
+
+
+
+%UPDATE: See new script Density.m
+
+
+
+
+
 %Converting the fwhm quickly to density
 %   hydrogenlamp
 hydrogenLamp = 5.76; % this must be some calibration factor? - Ellie Tan
