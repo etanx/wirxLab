@@ -15,7 +15,8 @@
 
 
 
-% Copied from density.m
+
+% Copied from density.m, to edit~
 
 
 % a funcction to analyse spectrometer images to get calibration values

@@ -23,7 +23,7 @@ Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% EXTRACT IMAGE DATA FROM WIRX TREE
+%% EXTRACT IMAGE DATA FROM WIRX TREE OR LOCAL FILE
 % NOTE: Make sure data has been written to tree with ccd2tre.m! Using this method 
 % reduces the hassle of saving specific file types and locating where they are in Box. 
 % If there's no data in the tree, Traverser will show the value font in purple. And you will get errors, of course.
