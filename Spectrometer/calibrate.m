@@ -1,9 +1,22 @@
-[] = calibrate( imagefile )
+%[] = calibrate(grating, gratingPosition, imagefile )
 
 % INPUTS
-% If no file path input, ask
+% grating = 150, 1800, or 3600 grating.
+% gratingPosition = wavelength that the grating is looking at
+% filepath = If no file path input, prompt user to select file in GUI window
 
 % OUTPUTS
+% px2nm = Conversion factor of pixels to nm
+% px2nmFunction = Calibration function of pixels to nanometer (FUTURE WORK)
+
+
+
+
+
+
+
+
+% Copied from density.m, to edit~
 
 
 % a funcction to analyse spectrometer images to get calibration values
