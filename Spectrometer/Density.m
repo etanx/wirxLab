@@ -106,6 +106,7 @@ pixels = 1:length(img_avg);
 intensity = img_avg;
 fwhmPixels = fwhm(pixels,intensity); 
 % ^check if this is actualyl correct since I didn't crop to the peak region only
+% currently only works for one peak (H-beta line)
 
 % CONVERSION: Pixels to nanometers
 % Spectrometer CCD Pixel Conversion notes:
