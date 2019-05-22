@@ -137,8 +137,6 @@ if Hbeta2density == 1
 fwhm_lamp = 4.*px2nmFactor; % This value is from Morken's code, best to get new calibration for each run day (see comment above)
 fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp)^2); % difference of squares for convolution of Gaussian distributions
 
-% electron density based on FWHM (ultimately from Plasma Diagnostics book,
-% used in Morken and Blasing's theses)
 n_e =  1e20 .* (sqrt(fwhm_calibrated)./0.04).^(3/2);
 fprintf('Electron density n_e = %4.2e /m^3\n',n_e)
 end
