@@ -31,6 +31,9 @@ localFile = 0; % Use 1 for 'YES'
 if localFile == 1
     % do you have a local file? Load it! File must be in same path as workspace
     filePath = uigetfile(path); % select .b16 raw image file in GUI window
+    if filePath == 0
+        error('No image to read.')
+    end
     imgData = flipud(readB16(filePath)); % flip upside down image?  
 else
 % If no local file, extract from tree
