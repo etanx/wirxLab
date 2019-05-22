@@ -1,4 +1,4 @@
-% a master script to analyse spectrometer images to get temperature and
+% a master script to analyse spectrometer images to get temperature (not implemented yet) and
 % density of plasma emission
 % Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael
 % Morken, David Blasing, and Isaac Fugate.
