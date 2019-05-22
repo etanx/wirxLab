@@ -22,10 +22,18 @@ lineHeight =(303:653); % Vertical range of spectrometer image (pixels). If too l
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
 
 Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
+localFile = 0; % Use 1 for 'YES' 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% EXTRACT IMAGE DATA FROM WIRX TREE OR LOCAL FILE
+
+if localFile == 1
+    % do you have a local file? Load it! File must be in same path as workspace
+    filePath = uigetfile(path); % select .b16 raw image file in GUI window
+    imgData = flipud(readB16(filePath)); % flip upside down image?  
+else
+% If no local file, extract from tree
 % NOTE: Make sure data has been written to tree with ccd2tre.m! Using this method 
 % reduces the hassle of saving specific file types and locating where they are in Box. 
 % If there's no data in the tree, Traverser will show the value font in purple. And you will get errors, of course.
@@ -35,6 +43,7 @@ imgData = flipud(mdsvalue( 'ICCD.DICAM2:FRAME1' )); % raw image was upside down
 mdsclose;
 mdsdisconnect;
 
+end
 
 %% DISPLAY RAW SPECTRA IMAGE
 % show original greyscale figure
