@@ -145,7 +145,7 @@ fwhm_nm = fwhmPixels*px2nmFactor;
 
 if Hbeta2density == 1
     
-%%load claibration image if any (future work)
+%%load calibration image if any (future work)
 fwhm_lamp = 4.*px2nmFactor; % This value is form Morken's code, best to get new calibration for each run day
 fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp)^2); % somehow this 
 
