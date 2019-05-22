@@ -18,7 +18,7 @@ shot = 1190517010;
 grating = 1800; % user defined grating spacing grooves/nm (150, 1800, or 3600)
 
 threshold = 150; % threshold intensity to identify peaks
-lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
+lineHeight =(303:653); % Vertical range of spectrometer image (pixels). If too large, might introduce optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
 
 Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
