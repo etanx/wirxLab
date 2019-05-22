@@ -1,5 +1,7 @@
-% a master script to analyse spectrometer images to get density of plasma emission
-% Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
+% a master script to analyse spectrometer images to get temperature and
+% density of plasma emission
+% Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael
+% Morken, David Blasing, and Isaac Fugate.
 %
 % Revised: Ellie Tan, Jodie McLennan, Stephen McKay. May 2019.
 
@@ -16,7 +18,7 @@ shot = 1190517010;
 grating = 1800; % user defined grating spacing grooves/nm (150, 1800, or 3600)
 
 threshold = 150; % threshold intensity to identify peaks
-lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
+lineHeight =(303:653); % Vertical range of spectrometer image (pixels). If too large, might introduce optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
 
 Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
@@ -61,13 +63,13 @@ title('Raw Image')
 % Find background average minus the peak
 disp('Estimating background...')
 background_estimate = mean(mean(imgData,1)); % average intensity including peaks
-imgBackground = imgData;
-imgBackground(imgBackground > background_estimate) = background_estimate; % replace peaks with background estimate average
+imgBackground = imgData; % create copy of image 
+imgBackground(imgBackground > background_estimate) = background_estimate; % replace peaks in copy with background estimate average
 background = mean(mean(imgBackground,1)); % average intensity excluding peaks
 
 % subtract background
 disp('Subtracting background...')
-imgOffset = imgData - imgBackground;
+imgOffset = imgData - imgBackground; 
 
 % Show 3D figure without background offset subtracted
 height = 1:1:size(imgOffset,1);
@@ -110,6 +112,12 @@ fwhmPixels = fwhm(pixels,intensity);
 % For 3600 grating, 0.115 nm per pixel - Blasing Lab notebook 3
 % For 1800 grating, 0.014 nm per pixel - Fugate in Craig's logbook
 % For 150 grating, 0.177 nm per pixel - Morken log book
+
+% In future, we want to create a calibration script/function to analyze a spectrometer image
+% from a lamp and determine a linear calibration relationship for each
+% grating. Then the hardcoded conversion factors can be replaced by this
+% function.
+
 switch grating
     case 3600
         disp("Using conversion for 3600 grating.")
@@ -126,10 +134,12 @@ fwhm_nm = fwhmPixels*px2nmFactor;
 
 if Hbeta2density == 1
     
-%%load claibration image if any (future work)
-fwhm_lamp = 4.*px2nmFactor; % This value is form Morken's code, best to get new calibration for each run day
-fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp)^2); % somehow this 
+%%load calibration image if any (future work)
+fwhm_lamp = 4.*px2nmFactor; % This value is from Morken's code, best to get new calibration for each run day (see comment above)
+fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp)^2); % difference of squares for convolution of Gaussian distributions
 
+% electron density based on FWHM (ultimately from Plasma Diagnostics book,
+% used in Morken and Blasing's theses)
 n_e =  1e20 .* (sqrt(fwhm_calibrated)./0.04).^(3/2);
 fprintf('Electron density n_e = %4.2e /m^3\n',n_e)
 end

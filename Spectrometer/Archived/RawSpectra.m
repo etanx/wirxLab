@@ -17,7 +17,7 @@ spectra_raw = mean(raw_image(369:725,:));%Not Background Subtracted
 pix = 1:length(spectra_raw);
 wavelen = zeros(1,length(spectra_raw));
 
-for i = 1:length(spectra_raw);
+for i = 1:length(spectra_raw)
     offset = pix(i) - hAlphaPeak; %16 in the pixel position of h-alpha
     lambda = (-1)*(offset*0.178)+ 656.6; %.178 is the nm per pixel on the 150 grating 656.6nm is h-alpha
     wavelen(i) = lambda;
