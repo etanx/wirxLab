@@ -1,3 +1,11 @@
+[] = calibrate( imagefile )
+
+% INPUTS
+% If no file path input, ask
+
+% OUTPUTS
+
+
 % a funcction to analyse spectrometer images to get calibration values
 % Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
 %
