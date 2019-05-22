@@ -1,14 +1,10 @@
-% a master script to analyse spectrometer images to get temperature and
-% density of plasma emission
-% Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael
-% Morken, David Blasing, and Isaac Fugate.
+% a funcction to analyse spectrometer images to get calibration values
+% Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
 %
 % Revised: Ellie Tan, Jodie McLennan, Stephen McKay. May 2019.
 
 % FUTURE WORK:
-% expand code to include Argon line ratios and broadening
-% expand code to use Doppler shift to get plasma velocity
-% test code with other gratings
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all, close all
@@ -63,13 +59,13 @@ title('Raw Image')
 % Find background average minus the peak
 disp('Estimating background...')
 background_estimate = mean(mean(imgData,1)); % average intensity including peaks
-imgBackground = imgData; % create copy of image 
-imgBackground(imgBackground > background_estimate) = background_estimate; % replace peaks in copy with background estimate average
+imgBackground = imgData;
+imgBackground(imgBackground > background_estimate) = background_estimate; % replace peaks with background estimate average
 background = mean(mean(imgBackground,1)); % average intensity excluding peaks
 
 % subtract background
 disp('Subtracting background...')
-imgOffset = imgData - imgBackground; 
+imgOffset = imgData - imgBackground;
 
 % Show 3D figure without background offset subtracted
 height = 1:1:size(imgOffset,1);
@@ -112,12 +108,6 @@ fwhmPixels = fwhm(pixels,intensity);
 % For 3600 grating, 0.115 nm per pixel - Blasing Lab notebook 3
 % For 1800 grating, 0.014 nm per pixel - Fugate in Craig's logbook
 % For 150 grating, 0.177 nm per pixel - Morken log book
-
-% In future, we want to create a calibration script/function to analyze a spectrometer image
-% from a lamp and determine a linear calibration relationship for each
-% grating. Then the hardcoded conversion factors can be replaced by this
-% function.
-
 switch grating
     case 3600
         disp("Using conversion for 3600 grating.")
@@ -134,63 +124,15 @@ fwhm_nm = fwhmPixels*px2nmFactor;
 
 if Hbeta2density == 1
     
-%%load calibration image if any (future work)
-fwhm_lamp = 4.*px2nmFactor; % This value is from Morken's code, best to get new calibration for each run day (see comment above)
-fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp)^2); % difference of squares for convolution of Gaussian distributions
+%%load claibration image if any (future work)
+fwhm_lamp = 4.*px2nmFactor; % This value is form Morken's code, best to get new calibration for each run day
+fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp)^2); % somehow this 
 
-% electron density based on FWHM (ultimately from Plasma Diagnostics book,
-% used in Morken and Blasing's theses)
 n_e =  1e20 .* (sqrt(fwhm_calibrated)./0.04).^(3/2);
 fprintf('Electron density n_e = %4.2e /m^3\n',n_e)
 end
 
 
-%%     
-% Plot spectra in nanometers
-% EDIT: This doesn't work cuz conversion is relative spacing, not absolute!
-% intensity = img_avg;
-% wavelengths = [1:length(img_avg)].*gratingFactor;
-% figure;
-% plot(wavelengths,intensity)
-% xlabel('Wavelength (nm)')
-% ylabel('Radiance/Intensity (some unit)')
-% grid on
-
-
-
-%%Optional data processing section
-% % set background to zero to reduce non-peak noise?
-% disp('Setting background to 0 intensity...')
-% imgPeaks = img_avg;
-% 
-% % roughly locate not-peak areas based on intensity ratio
-% disp('Locating peaks...')
-% peaksYes = find(img_avg >= threshold);
-% peakMiddle = median(peaksYes);
-% peaksNope = find(img_avg < threshold);
-
-%%modify peak area to include user-defined line width
-% makeWider = not(ismember(peaksNope,lineWidth)); % areas to keep
-% peaksNopeWide = peaksNope(makeWider);
-% imgPeaks(peaksNopeWide) = 0; % set non-peak area to zero
-%%NOTE: Not satisfied with the above because then code can only deal with
-% one peak. What about cases where there are multiple ones?
-
-% peakWidthHalf = round(lineWidth./2);
-% peaksRight = peakMiddle + peakWidthHalf;
-% peaksLeft = peakMiddle - peakWidthHalf;
-
-
-%imgPeaks(peaksNopeWide) = 0;
-
-
-% % Plot 1D vertically-averaged intensity
-% figure;
-% plot(imgPeaks)
-% xlabel('Width (pixels)')
-% ylabel('Peak Intensity')
-% title('Peak Only')
-% grid on
 
 
 
