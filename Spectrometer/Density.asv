@@ -1,4 +1,4 @@
-% a master script to analyse spectrometer images to get density of plasma emission
+% a master script to analyse spectrometer images to get% density of plasma emission
 % Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
 %
 % Revised: Ellie Tan, Jodie McLennan, Stephen McKay. May 2019.
@@ -6,7 +6,6 @@
 % FUTURE WORK:
 % expand code to include Argon line ratios and broadening
 % expand code to use Doppler shift to get plasma velocity
-% test code with other gratings
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all, close all
