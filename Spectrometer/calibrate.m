@@ -106,25 +106,27 @@ peakPos = sort(peakPos);
 
 
 %% CONVERSION: Pixels to nanometers
+% find parameters a and b that corespond to conversion of nm/pix (a) and nm offset (b): lambda = a*pixels + b
+% 
 
 switch grating
     case 150
-        Hdistnm = 486-434;
-        Hdistpix = peakPos(3)-peakPos(1);
-        a1 = Hdistnm/Hdistpix;
-        HeDist12nm = 588-501;
-        HeDist12pix = peakPos(5)-peakPos(4);
-        HeDist23nm = 501-447;
+        Hdistnm = 486-434; % known Hydrogen wavelengths of H beta and H gama
+        Hdistpix = peakPos(3)-peakPos(1); % since we know relative position of peaks we can pick up the Hbeta and Hgama positions
+        a1 = Hdistnm/Hdistpix; % one nm/pix value
+        HeDist12nm = 588-501; % distance in nm between two know He wavlengths
+        HeDist12pix = peakPos(5)-peakPos(4);  % can pick out these wavelengths since we know the relative positions
+        HeDist23nm = 501-447; %same steps
         HeDist23pix = peakPos(4)-peakPos(2);
-        He12 = HeDist12nm/HeDist12pix;
+        He12 = HeDist12nm/HeDist12pix; % find two more nm/pix values
         He23 = HeDist23nm/HeDist23pix;
-        a = 1/3*(He12+He23+a1);
-        b = 486 - a * peakPos(3);
+        a = 1/3*(He12+He23+a1); % average these values to find one nm/pix value
+        b = 486 - a * peakPos(3); % to find nm offset, always have H beta line so use that...derviation in McLennan or MacKay notebook
     case 1800
-        distnm = 492-486;
-        distpix = peakPos(2)-peakPos(1);
-        a = distnm/distpix;
-        b = 486 - a * peakPos(1);
+        distnm = 492-486; % known wavelengths of Hbeta and He line
+        distpix = peakPos(2)-peakPos(1); % distance in pixels
+        a = distnm/distpix; % nm/pixel value
+        b = 486 - a * peakPos(1); % to find nm offset, always have H beta line so use that...derviation in McLennan or MacKay notebook
 end
 
 
