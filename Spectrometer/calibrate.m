@@ -28,25 +28,21 @@ function [a,b] = calibrate(grating, targetnm, HImgPath, HeImgPath)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clear all, close all
 
 % user inputs
-
 threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % if input filepaths exist
 if nargin == 4
     % read in files from filepaths
-    HImgData = flipud(readB16(HImgPath);
-    HeImgData = flipud(readB16(HeImgPath);
+    HImgData = flipud(readB16(HImgPath));
+    HeImgData = flipud(readB16(HeImgPath));
 
 else % if user does not supply BOTH Hydrogen and Helium path
-    % temporary user GUI to choose images from file
+    % user GUI to choose images from file
     [HFile, HPathname] = uigetfile('.b16', 'Pick a hydrogen spectra image'); % title does not appear on macOS
         if isequal(HFile,0) || isequal(HPathname,0)
            disp('User pressed cancel')
@@ -59,12 +55,12 @@ else % if user does not supply BOTH Hydrogen and Helium path
            disp('User pressed cancel')
         else
            disp(['User selected ', fullfile(HePathname, HeFile)])
-        end
-end    
+        end    
     
-HImgData = flipud(readB16(fullfile(HPathname, HFile)));
-HeImgData = flipud(readB16(fullfile(HePathname, HeFile)));
- 
+    HImgData = flipud(readB16(fullfile(HPathname, HFile)));
+    HeImgData = flipud(readB16(fullfile(HePathname, HeFile)));
+end
+
 
 %% CLEAN UP DATA (two times, once for each image)
 
@@ -110,7 +106,7 @@ peakPos = sort(peakPos);
 
 
 %% CONVERSION: Pixels to nanometers
-% find parameters a and b that corespond to conversion of nm/pix (a) and nm offset (b): lambda = a*pixels + b
+% find parameters a and b that corespond to conversion of nm/pix (a) and nm offset (b): lambda_nm = a*pixels + b
 % 
 
 switch grating
