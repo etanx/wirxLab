@@ -119,11 +119,14 @@ switch grating
         He12 = HeDist12nm/HeDist12pix;
         He23 = HeDist23nm/HeDist23pix;
         a = 1/3*(He12+He23+a1);
+        b = 486 - a * peakPos(3);
     case 1800
         distnm = 492-486;
         distpix = peakPos(2)-peakPos(1);
         a = distnm/distpix;
+        b = 486 - a * peakPos(1);
 end
+
 
 %% DISPLAY RAW SPECTRA IMAGE (Denisty.m code, probably not needed)
 % % show original greyscale figure
