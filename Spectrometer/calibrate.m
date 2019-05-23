@@ -149,3 +149,24 @@ end
 [HBetaVal, HBetaLoc, HBetaFWHM] = findpeaks(img_avg,pixels,'WidthReference', 'halfheight','SortStr','descend','NPeaks',1); % pull out max peak location in pixels, assuming this is H-Beta
 
 
+
+
+
+
+% Spectra plotted with wavelengths
+nanoms = pixels*pix2nm;
+figure
+plot(nanoms,img_avg)
+xlabel('Wavelength (nm)')
+ylabel('Intensity')
+[PeakInt,PeakPos]=findpeaks(img_avg,nanoms,'MinPeakHeight',25)
+specraWavlengths = PeakPos*pix2nm + offset;
+hold on 
+for i=1:length(wav)
+    text(spectraWavlengths(i),PeakInt(i),num2str(spectraWavlengths(i)))
+end
+hold off
+
+
+
+
