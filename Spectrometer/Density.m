@@ -28,8 +28,7 @@ lineHeight =(320:645); % Vertical range of line (pixels). If too large, might in
 lineWidth = (685-630); % broadened line width to take into account. Make sure it is not too small to keep the curve shape.
 
 Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
-
-localFile = 1; % Use 1 for 'YES' 
+localFile = 0; % Use 1 for 'YES' 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -115,6 +114,8 @@ ylabel('Line-Averaged Intensity')
 grid on
 
 
+
+
 %%There is an optional section you can include here. Code at the end of script.
 %It can clean up data, but is difficult to deal with multiple peaks!
 
@@ -127,6 +128,9 @@ fwhmPixels = fwhm(pixels,intensity);
 % ^check if this is actualyl correct since I didn't crop to the peak region only
 % currently only works for one peak (H-beta line)
 
+
+
+
 % CONVERSION: Pixels to nanometers
 % Spectrometer CCD Pixel Conversion notes:
 % For 3600 grating, 0.115 nm per pixel - Blasing Lab notebook 3
@@ -138,11 +142,23 @@ fwhmPixels = fwhm(pixels,intensity);
 % grating. Then the hardcoded conversion factors can be replaced by this
 % function.
 
-
 [px2nmFactor, offset, ] = calibrate(grating, targetnm);
 
-fwhm_nm = fwhmPixels*px2nmFactor;
+% Spectra plotted with wavelengths
+nanoms = pixels*px2nmFactor;
+figure
+plot(nanoms,intensity)
+xlabel('Wavelength (nm)')
+ylabel('Intensity')
+[PeakInt,PeakPos]=findpeaks(intensity,nanoms,'MinPeakHeight',25)
+specraWavlengths = PeakPos*px2nmFactor + offset;
+hold on 
+for i=1:length(wav)
+    text(spectraWavlengths(i),PeakInt(i),num2str(spectraWavlengths(i)))
+end
+hold off
 
+fwhm_nm = fwhmPixels*px2nmFactor;
 
 if Hbeta2density == 1
     
