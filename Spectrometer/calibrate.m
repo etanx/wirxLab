@@ -1,4 +1,5 @@
-%function [a,b] = calibrate(HImage, HeImage, element)
+%function [a,b] = calibrate(HImage, ArImage, HeImage, grating)
+
 
 % INPUTS
 % grating = 150, 1800, or 3600 grating.
@@ -35,6 +36,7 @@ Hbetanm = 486; % wavelength in nm
 Halphanm = 656; %nm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 % use for when calibrate is a function
 %HImgData = HImage;
 %HeImgData = HeImage;
@@ -60,29 +62,6 @@ HImgData = flipud(readB16(fullfile(HPathname, HFile)));
 HeImgData = flipud(readB16(fullfile(HePathname, HeFile)));
  
 
-% %% DISPLAY RAW SPECTRA IMAGE (Density.m code, probably not needed)
-% % show original greyscale figure
-% figure
-% fig = imagesc(HImgData); 
-% colormap 'gray'; %Convert figure into a RGB 'jet' or grayscale 'gray' image.
-% set(gca, 'Visible', 'off')
-% %text(5,40,num2str(shot),'Color','white') % label shot number on image
-% 
-% % Show 3D figure
-% height = 1:1:size(HImgData,1);
-% width = 1:1:size(HImgData,2);
-% figure;
-% [X, Y] = meshgrid(width, height);
-% Z = HImgData;
-% fig = surf(X,Y,Z);
-% colormap 'jet'; %Use 'jet' for more interesting looking pictures.
-% set(fig, 'EdgeColor', 'none');
-% xlabel('Width (px)')
-% ylabel('Height (px)')
-% zlabel('Intensity')
-% title('Raw Image')
-% 
-
 %% CLEAN UP DATA (two times, once for each image)
 
 % Find background average minus the peak
@@ -106,19 +85,6 @@ HeImgOffset = HeImgData - HeImgBackground;
 % combined image using both spectra
 combImage = HImgOffset + HeImageOffset;
 
-%% Show 3D figure without background offset subtracted
-height = 1:1:size(imgOffset,1);
-width = 1:1:size(imgOffset,2);
-figure;
-[X, Y] = meshgrid(width, height);
-Z = imgOffset;
-fig = surf(X,Y,Z);
-colormap 'jet'; %Use 'jet' for more interesting looking pictures.
-set(fig, 'EdgeColor', 'none');
-xlabel('Width (px)')
-ylabel('Height (px)')
-zlabel('Intensity')
-title('Background-subtracted')
 
 %% Average intensity vertically for height of line
 img_avg = mean( combImage(lineHeight,:),1 ); % take vertical average of the line.
@@ -131,37 +97,77 @@ ylabel('Line-Averaged Intensity')
 grid on
 
 
-%%There is an optional section you can include here. Code at the end of script.
-%It can clean up data, but is difficult to deal with multiple peaks!
-
 %% Find Peaks
 pixels = 1:length(img_avg);
 [peakInten, peakPos] = findpeaks(img_avg,pixels,'MinPeakHeight',threshold,...
-'SortStr',descend,'NPeaks',3); 
+'SortStr',descend,'NPeaks',5); 
+peakPos = sort(peakPos);
 
-
-
-%% get FWHM from spectra for density if there's a Hbeta line
-
-
-intensity = img_avg;
-fwhmPixels = fwhm(pixels,intensity); 
-% ^check if this is actualyl correct since I didn't crop to the peak region only
 
 
 %% CONVERSION: Pixels to nanometers
 
-switch element
-    case hydrogen
+switch grating
+    case 150
         Hdistnm = 486-434;
-        Hdistpix = peakPos(1)-peakPos(2);
-        a = Hdistnm/Hdistpix;
-    case helium
+        Hdistpix = peakPos(3)-peakPos(1);
+        a1 = Hdistnm/Hdistpix;
         HeDist12nm = 588-501;
-        HeDist12pix = peakPos(1)-peakPos(1);
+        HeDist12pix = peakPos(5)-peakPos(4);
         HeDist23nm = 501-447;
-        HeDist23pix = peakPos(3)-peakPos(2);
+        HeDist23pix = peakPos(4)-peakPos(2);
         He12 = HeDist12nm/HeDist12pix;
         He23 = HeDist23nm/HeDist23pix;
-        a = .5*(He12+He23);
+        a = 1/3*(He12+He23+a1);
+    case 1800
+        distnm = 486-492;
+        distpix = peakPos(2)-peakPos(1);
+        a = distnm/distpix;
 end
+
+%% DISPLAY RAW SPECTRA IMAGE (Denisty.m code, probably not needed)
+% % show original greyscale figure
+% figure
+% fig = imagesc(HImgData); 
+% colormap 'gray'; %Convert figure into a RGB 'jet' or grayscale 'gray' image.
+% set(gca, 'Visible', 'off')
+% %text(5,40,num2str(shot),'Color','white') % label shot number on image
+% 
+% % Show 3D figure
+% height = 1:1:size(HImgData,1);
+% width = 1:1:size(HImgData,2);
+% figure;
+% [X, Y] = meshgrid(width, height);
+% Z = HImgData;
+% fig = surf(X,Y,Z);
+% colormap 'jet'; %Use 'jet' for more interesting looking pictures.
+% set(fig, 'EdgeColor', 'none');
+% xlabel('Width (px)')
+% ylabel('Height (px)')
+% zlabel('Intensity')
+% title('Raw Image')
+% 
+
+% Show 3D figure without background offset subtracted
+% height = 1:1:size(imgOffset,1);
+% width = 1:1:size(imgOffset,2);
+% figure;
+% [X, Y] = meshgrid(width, height);
+% Z = imgOffset;
+% fig = surf(X,Y,Z);
+% colormap 'jet'; %Use 'jet' for more interesting looking pictures.
+% set(fig, 'EdgeColor', 'none');
+% xlabel('Width (px)')
+% ylabel('Height (px)')
+% zlabel('Intensity')
+% title('Background-subtracted')
+
+%There is an optional section you can include here. Code at the end of script.
+%It can clean up data, but is difficult to deal with multiple peaks!
+
+% get FWHM from spectra for density if there's a Hbeta line
+
+%intensity = img_avg;
+%fwhmPixels = fwhm(pixels,intensity); 
+% ^check if this is actualyl correct since I didn't crop to the peak region only
+
