@@ -1,4 +1,4 @@
-function [pix2nm,offset] = calibrate(grating, targetnm, HImgPath, HeImgPath)
+function [pix2nm,offset, HBetaFWHM] = calibrate(grating, targetnm, doPlot, HImgPath, HeImgPath)
 % a function to analyze spectrometer images to get calibration values.
 % Returns the slope (pix2nm) and intercept (offset) of the spectrometer's
 % pixel-to-wavelength conversion line. Also determines the instrument error
@@ -13,6 +13,7 @@ function [pix2nm,offset] = calibrate(grating, targetnm, HImgPath, HeImgPath)
 % grating = 150, 1800, or 3600 grooves/nm grating.
 % targetnm = wavelength that the grating is looking at (nm) 
         %not used at the moment but will be in future work
+% 
 % HImgPath = hydrogen calibration filepath
 % HeImgPath = helium cal. image filepath
 %       If no file path input, prompt user to select file in GUI window
@@ -41,10 +42,10 @@ HBetanm = 486.1; % constant value of H-Beta line in nm
 
 %% READ IN IMAGE FILES
 % if input filepaths exist
-if nargin == 4
+if nargin == 5
     % read in files from filepaths
-    HImgData = flipud(readB16(HImgPath));
-    HeImgData = flipud(readB16(HeImgPath));
+    HImgData = rot90(readB16(HImgPath),2); % rotate 180 since pic is upside down and backwards
+    HeImgData = rot90(readB16(HeImgPath),2);
 
 else % if user does not supply BOTH Hydrogen and Helium path
     % user GUI to choose images from file
@@ -62,8 +63,8 @@ else % if user does not supply BOTH Hydrogen and Helium path
            disp(['User selected ', fullfile(HePathname, HeFile)])
         end    
     
-    HImgData = flipud(readB16(fullfile(HPathname, HFile)));
-    HeImgData = flipud(readB16(fullfile(HePathname, HeFile)));
+    HImgData = rot90(readB16(fullfile(HPathname, HFile)),2);  % rotate 180 since pic is upside down and backwards
+    HeImgData = rot90(readB16(fullfile(HePathname, HeFile)),2);
 end
 
 
@@ -96,14 +97,15 @@ combImage = HImgOffset + HeImgOffset; % combined image using both hydrogen and h
 
 img_avg = mean( combImage(lineHeight,:),1 ); % take vertical average of the image (within lineHeight range).
 
-% commented out so not to display plot when using Density.m
-% % Plot 1D average intensity
-% figure;
-% plot(img_avg)
-% xlabel('Width (pixels)')
-% ylabel('Line-Averaged Intensity')
-% grid on
-
+% If user wants plot
+if doPlot == 1
+    % Plot 1D average intensity
+    figure;
+    plot(img_avg)
+    xlabel('Width (pixels)')
+    ylabel('Line-Averaged Intensity')
+    grid on
+end
 
 %% Find Peaks
 pixels = 1:length(img_avg);
@@ -133,15 +135,17 @@ switch grating
         pix2nm = 1/3*(He12+He23+a1); % average these values to find one nm/pix value
         offset = HBetanm - pix2nm * peakPos(3); % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook)
     case 1800
-        HBetaPix = peakPos(2); % pixel location of H-Beta line
-        He492Pix = peakPos(1); % pixel location of 492 nm He line
+        HBetaPix = peakPos(1); % pixel location of H-Beta line
+        He492Pix = peakPos(2); % pixel location of 492 nm He line
         distnm = 492-486; % known wavelengths of Hbeta and He line
-        distpix = HBetaPix - He492Pix; % distance in pixels
+        distpix = He492Pix - HBetaPix; % distance in pixels
         pix2nm = distnm/distpix; % nm/pixel value
         offset = HBetanm - pix2nm * HBetaPix; % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook
 end
 
 %% FWHM of H-beta line for calibration of spectrometer
 
+% Extract width of tallest (H-beta) line
+[HBetaVal, HBetaLoc, HBetaFWHM] = findpeaks(img_avg,pixels,'WidthReference', 'halfheight','SortStr','descend','NPeaks',1); % pull out max peak location in pixels, assuming this is H-Beta
 
 

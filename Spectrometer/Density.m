@@ -43,7 +43,7 @@ if localFile == 1
     imgData = flipud(readB16(filePath)); % flip upside down image?  
 else
 % If no local file, extract from tree
-% NOTE: Make sure data has been written to tree with ccd2tre.m! Using this method 
+% NOTE: Make sure data has been written to tree with ccd2tree.m! Using this method 
 % reduces the hassle of saving specific file types and locating where they are in Box. 
 % If there's no data in the tree, Traverser will show the value font in purple. And you will get errors, of course.
 mdsconnect('WIRX07');
@@ -121,33 +121,27 @@ grid on
 %% get FWHM from spectra for density if there's a Hbeta line
 
 pixels = 1:length(img_avg);
-intensity = img_avg;
-fwhmPixels = fwhm(pixels,intensity); 
-% ^check if this is actualyl correct since I didn't crop to the peak region only
-% currently only works for one peak (H-beta line)
+[HBetaVal, HBetaLoc, HBetaFWHM] = findpeaks(img_avg,pixels,'WidthReference','halfheight','SortStr','descend','NPeaks',1); % pull out max peak location in pixels, assuming this is H-Beta
+% pulls out intensity, location, and width of H-Beta peak. We only use the
+% width in our script (as the FWHM)
 
-% CONVERSION: Pixels to nanometers
-% Spectrometer CCD Pixel Conversion notes:
-% For 3600 grating, 0.115 nm per pixel - Blasing Lab notebook 3
-% For 1800 grating, 0.014 nm per pixel - Fugate in Craig's logbook
-% For 150 grating, 0.177 nm per pixel - Morken log book
+% determine calibration values for the current day:
+       % first select H calibration image and then He calibration image when
+       % prompted to pick files. calibrate() returns the px2nmFactor, which
+       % is the ratio of pixels to nm for that particular spectrometer
+       % configuration. offset is the wavelength value at the 0-pixel
+       % location, and HLampFWHM is the width of the H-beta line in the
+       % calibration shot.
+[px2nmFactor, offset, HLampFWHM] = calibrate(grating, targetnm, 0);
 
-% In future, we want to create a calibration script/function to analyze a spectrometer image
-% from a lamp and determine a linear calibration relationship for each
-% grating. Then the hardcoded conversion factors can be replaced by this
-% function.
-
-
-[px2nmFactor, offset, ] = calibrate(grating, targetnm);
-
-fwhm_nm = fwhmPixels*px2nmFactor;
+fwhm_nm = fwhmPixels*px2nmFactor; % find FWHM of image in nm
 
 
 if Hbeta2density == 1
     
-%%load calibration image if any (future work)
-fwhm_lamp = 4.*px2nmFactor; % This value is from Morken's code, best to get new calibration for each run day (see comment above)
-fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp)^2); % difference of squares for convolution of Gaussian distributions
+% calculate true FWHM using difference of squares
+fwhm_lamp_nm = HLampFWHM*px2nmFactor; % find calibration FWHM in nm
+fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp_nm)^2); % difference of squares for convolution of Gaussian distributions
 
 % electron density based on FWHM (ultimately from Plasma Diagnostics book,
 % used in Morken and Blasing's theses)
