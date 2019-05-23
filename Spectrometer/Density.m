@@ -155,16 +155,15 @@ end
 %% Plot spectra in nanometers
 
 % Spectra plotted with wavelengths
-nanoms = pixels*px2nmFactor;
+nanoms = pixels*px2nmFactor + offset;
 figure
 plot(nanoms,intensity)
 xlabel('Wavelength (nm)')
 ylabel('Intensity')
 [PeakInt,PeakPos]=findpeaks(intensity,nanoms,'MinPeakHeight',25)
-specraWavlengths = PeakPos*px2nmFactor + offset;
 hold on 
-for i=1:length(spectraWavlengths)
-    text(spectraWavlengths(i),PeakInt(i),num2str(spectraWavlengths(i)))
+for i=1:length(PeakPos)
+    text(PeakPos(i),PeakInt(i),num2str(PeakPos(i)))
 end
 hold off
 

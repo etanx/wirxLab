@@ -39,7 +39,7 @@ lineHeight =(303:653); % Vertical start-end location of line (pixels). If too la
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
 
 HBetanm = 486.1; % constant value of H-Beta line in nm
-
+He492nm = 492.231; % constant value of He-492 line in nm (make more precise later)
 %% READ IN IMAGE FILES
 % if input filepaths exist
 if nargin == 5
@@ -137,7 +137,7 @@ switch grating
     case 1800
         HBetaPix = peakPos(1); % pixel location of H-Beta line
         He492Pix = peakPos(2); % pixel location of 492 nm He line
-        distnm = 492-486; % known wavelengths of Hbeta and He line
+        distnm = He492nm-HBetanm; % known wavelengths of Hbeta and He line
         distpix = He492Pix - HBetaPix; % distance in pixels
         pix2nm = distnm/distpix; % nm/pixel value
         offset = HBetanm - pix2nm * HBetaPix; % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook
@@ -147,25 +147,6 @@ end
 
 % Extract width of tallest (H-beta) line
 [HBetaVal, HBetaLoc, HBetaFWHM] = findpeaks(img_avg,pixels,'WidthReference', 'halfheight','SortStr','descend','NPeaks',1); % pull out max peak location in pixels, assuming this is H-Beta
-
-
-
-
-
-
-% Spectra plotted with wavelengths
-nanoms = pixels*pix2nm;
-figure
-plot(nanoms,img_avg)
-xlabel('Wavelength (nm)')
-ylabel('Intensity')
-[PeakInt,PeakPos]=findpeaks(img_avg,nanoms,'MinPeakHeight',25)
-specraWavlengths = PeakPos*pix2nm + offset;
-hold on 
-for i=1:length(wav)
-    text(spectraWavlengths(i),PeakInt(i),num2str(spectraWavlengths(i)))
-end
-hold off
 
 
 
