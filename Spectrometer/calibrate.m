@@ -127,7 +127,7 @@ grid on
 %% Find Peaks
 pixels = 1:length(img_avg);
 [peakInten, peakPos] = findpeaks(img_avg,pixels,'MinPeakHeight',threshold,...
-'SortStr',descend,'NPeaks',4); 
+'SortStr',descend,'NPeaks',5); 
 
 
 
@@ -143,16 +143,17 @@ pixels = 1:length(img_avg);
 
 switch grating
     case 150
+        peakPos = sort(peakPos);
         Hdistnm = 486-434;
-        Hdistpix = peakPos(1)-peakPos(2);
+        Hdistpix = peakPos(3)-peakPos(1);
         a1 = Hdistnm/Hdistpix;
         HeDist12nm = 588-501;
-        HeDist12pix = peakPos(1)-peakPos(1);
+        HeDist12pix = peakPos(5)-peakPos(4);
         HeDist23nm = 501-447;
-        HeDist23pix = peakPos(3)-peakPos(2);
+        HeDist23pix = peakPos(4)-peakPos(2);
         He12 = HeDist12nm/HeDist12pix;
         He23 = HeDist23nm/HeDist23pix;
-        a = .5*(He12+He23);
+        a = 1/3*(He12+He23+a1);
     case 1800
 
 end
