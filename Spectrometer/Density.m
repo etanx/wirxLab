@@ -137,9 +137,11 @@ fwhmPixels = fwhm(pixels,intensity);
 % grating. Then the hardcoded conversion factors can be replaced by this
 % function.
 
+
 [px2nmFactor, offset, ] = calibrate(grating, targetnm);
 
 fwhm_nm = fwhmPixels*px2nmFactor;
+
 
 if Hbeta2density == 1
     
