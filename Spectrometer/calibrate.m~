@@ -62,20 +62,20 @@ ArImgData = ArImage;
 % title('Raw Image')
 % 
 
-%% CLEAN UP DATA (three times, once for each image. Future: make this a loop?)
+%% CLEAN UP DATA (maybe need to run three times, once for each image)
 % Find background average minus the peak
 % disp('Estimating background...')
 H_bg_est = mean(mean(HImgData,1)); % average intensity including peaks
-HImgBackground = HImgData;
-HImgBackground(HImgBackground > H_bg_est) = H_bg_est; % replace peaks with background estimate average
-HBackground = mean(mean(HImgBackground,1)); % average intensity excluding peaks
+imgBackground = HImgData;
+imgBackground(imgBackground > H_bg_est) = H_bg_est; % replace peaks with background estimate average
+HBackground = mean(mean(imgBackground,1)); % average intensity excluding peaks
 
 % subtract background
 % disp('Subtracting background...')
-HImgOffset = HImgData - HImgBackground;
+HImgOffset = HImgData - imgBackground;
 
-He_bg_est = mean(mean(HeImgData,1)); % average intensity including peaks
-HeImgBackground = HeImgData;
+He_bg_est = mean(mean(HImgData,1)); % average intensity including peaks
+HeImgBackground = HImgData;
 HeImgBackground(HeImgBackground > He_bg_est) = He_bg_est; % replace peaks with background estimate average
 HeBackground = mean(mean(HeImgBackground,1)); % average intensity excluding peaks
 
@@ -83,9 +83,9 @@ HeBackground = mean(mean(HeImgBackground,1)); % average intensity excluding peak
 % disp('Subtracting background...')
 HeImgOffset = HeImgData - HeImgBackground;
 
-Ar_bg_est = mean(mean(ArImgData,1)); % average intensity including peaks
-ArImgBackground = ArImgData;
-ArImgBackground(ArImgBackground > Ar_bg_est) = Ar_bg_est; % replace peaks with background estimate average
+bg_est = mean(mean(HImgData,1)); % average intensity including peaks
+ArImgBackground = HImgData;
+imgBackground(imgBackground > bg_est) = bg_est; % replace peaks with background estimate average
 ArBackground = mean(mean(ArImgBackground,1)); % average intensity excluding peaks
 
 % subtract background
@@ -93,8 +93,8 @@ ArBackground = mean(mean(ArImgBackground,1)); % average intensity excluding peak
 ArImageOffset = ArImgData - ArImgBackground;
 
 
-% combined image using all three spectra
-combImage = HImgOffset + HeImageOffset + ArImageOffset;
+
+combImage = HImgOffset + HeImageOffset + ArImageOffset
 
 % %% Show 3D figure without background offset subtracted
 % height = 1:1:size(imgOffset,1);
