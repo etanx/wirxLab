@@ -1,4 +1,4 @@
-%function [a,b] = calibrate(HImage, ArImage, HeImage, element)
+%function [a,b] = calibrate(HImage, HeImage, element)
 
 % INPUTS
 % grating = 150, 1800, or 3600 grating.
@@ -35,11 +35,32 @@ Hbetanm = 486; % wavelength in nm
 Halphanm = 656; %nm
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-HImgData = Himage;
-HeImgData = Heimage;
-ArImgData = ArImage;
+% use for when calibrate is a function
+%HImgData = HImage;
+%HeImgData = HeImage;
 
-% %% DISPLAY RAW SPECTRA IMAGE (Denisty.m code, probably not needed)
+
+% temporary user GUI to choose images from file
+[HFile, HPathname] = uigetfile([], 'Pick a hydrogen spectra image');
+    if isequal(HFile,0) || isequal(HPathname,0)
+       disp('User pressed cancel')
+    else
+       disp(['User selected ', fullfile(HPathname, HFile)])
+    end
+    
+[HeFile, HePathname] = uigetfile('., 'Pick a helium spetra image');
+    if isequal(HeFile,0) || isequal(HePathname,0)
+       disp('User pressed cancel')
+    else
+       disp(['User selected ', fullfile(HePathname, HeFile)])
+    end
+    
+    
+HImgData = flipud(readB16(HPathname));
+HImgData = flipud(readB16(HPathname));
+ 
+
+% %% DISPLAY RAW SPECTRA IMAGE (Density.m code, probably not needed)
 % % show original greyscale figure
 % figure
 % fig = imagesc(HImgData); 
@@ -62,53 +83,42 @@ ArImgData = ArImage;
 % title('Raw Image')
 % 
 
-%% CLEAN UP DATA (maybe need to run three times, once for each image)
+%% CLEAN UP DATA (two times, once for each image)
+
 % Find background average minus the peak
 % disp('Estimating background...')
 H_bg_est = mean(mean(HImgData,1)); % average intensity including peaks
-imgBackground = HImgData;
-imgBackground(imgBackground > H_bg_est) = H_bg_est; % replace peaks with background estimate average
-HBackground = mean(mean(imgBackground,1)); % average intensity excluding peaks
+HImgBackground = HImgData;
+HImgBackground(HImgBackground > H_bg_est) = H_bg_est; % replace peaks with background estimate average
+HBackground = mean(mean(HImgBackground,1)); % average intensity excluding peaks
 
-% subtract background
-% disp('Subtracting background...')
-HImgOffset = HImgData - imgBackground;
-
-He_bg_est = mean(mean(HImgData,1)); % average intensity including peaks
-HeImgBackground = HImgData;
+He_bg_est = mean(mean(HeImgData,1)); % repeat for helium
+HeImgBackground = HeImgData;
 HeImgBackground(HeImgBackground > He_bg_est) = He_bg_est; % replace peaks with background estimate average
 HeBackground = mean(mean(HeImgBackground,1)); % average intensity excluding peaks
 
 % subtract background
 % disp('Subtracting background...')
+HImgOffset = HImgData - HImgBackground;
 HeImgOffset = HeImgData - HeImgBackground;
 
-bg_est = mean(mean(HImgData,1)); % average intensity including peaks
-ArImgBackground = HImgData;
-imgBackground(imgBackground > bg_est) = bg_est; % replace peaks with background estimate average
-ArBackground = mean(mean(ArImgBackground,1)); % average intensity excluding peaks
 
-% subtract background
-% disp('Subtracting background...')
-ArImageOffset = ArImgData - ArImgBackground;
+% combined image using both spectra
+combImage = HImgOffset + HeImageOffset;
 
-
-
-combImage = HImgOffset + HeImageOffset + ArImageOffset
-
-% %% Show 3D figure without background offset subtracted
-% height = 1:1:size(imgOffset,1);
-% width = 1:1:size(imgOffset,2);
-% figure;
-% [X, Y] = meshgrid(width, height);
-% Z = imgOffset;
-% fig = surf(X,Y,Z);
-% colormap 'jet'; %Use 'jet' for more interesting looking pictures.
-% set(fig, 'EdgeColor', 'none');
-% xlabel('Width (px)')
-% ylabel('Height (px)')
-% zlabel('Intensity')
-% title('Background-subtracted')
+%% Show 3D figure without background offset subtracted
+height = 1:1:size(imgOffset,1);
+width = 1:1:size(imgOffset,2);
+figure;
+[X, Y] = meshgrid(width, height);
+Z = imgOffset;
+fig = surf(X,Y,Z);
+colormap 'jet'; %Use 'jet' for more interesting looking pictures.
+set(fig, 'EdgeColor', 'none');
+xlabel('Width (px)')
+ylabel('Height (px)')
+zlabel('Intensity')
+title('Background-subtracted')
 
 %% Average intensity vertically for height of line
 img_avg = mean( combImage(lineHeight,:),1 ); % take vertical average of the line.
