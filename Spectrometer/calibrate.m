@@ -1,5 +1,9 @@
-function [a,b] = calibrate(grating, targetnm, HImgPath, HeImgPath)
-% a function to analyze spectrometer images to get calibration values
+function [pix2nm,offset] = calibrate(grating, targetnm, HImgPath, HeImgPath)
+% a function to analyze spectrometer images to get calibration values.
+% Returns the slope (pix2nm) and intercept (offset) of the spectrometer's
+% pixel-to-wavelength conversion line. Also determines the instrument error
+% by finding the FWHM of the H-beta line.
+%
 % Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
 %
 % Revised: Ellie Tan, Jodie McLennan, Stephen McKay. May 2019.
@@ -15,9 +19,8 @@ function [a,b] = calibrate(grating, targetnm, HImgPath, HeImgPath)
 
 % OUTPUTS 
 %
-% constants in equation lambda_nm = a*pixel + b
-% a = Conversion factor of pixels to nm 
-% b = Offset in nm (since 0 pixels corresponds to a nonzero value of
+% pix2nm = Conversion factor of pixels to nm 
+% offset = wavelength/pixel offset in nm (since 0 pixels corresponds to a nonzero value of
 % wavelength on the spectrometer)
 
 
@@ -127,14 +130,18 @@ switch grating
         HeDist23pix = peakPos(4)-peakPos(2);
         He12 = HeDist12nm/HeDist12pix; % find two more nm/pix values
         He23 = HeDist23nm/HeDist23pix;
-        a = 1/3*(He12+He23+a1); % average these values to find one nm/pix value
-        b = 486 - a * peakPos(3); % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook)
+        pix2nm = 1/3*(He12+He23+a1); % average these values to find one nm/pix value
+        offset = HBetanm - pix2nm * peakPos(3); % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook)
     case 1800
         HBetaPix = peakPos(2); % pixel location of H-Beta line
         He492Pix = peakPos(1); % pixel location of 492 nm He line
         distnm = 492-486; % known wavelengths of Hbeta and He line
         distpix = HBetaPix - He492Pix; % distance in pixels
-        a = distnm/distpix; % nm/pixel value
-        b = HBetanm - a * HBetaPix; % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook
+        pix2nm = distnm/distpix; % nm/pixel value
+        offset = HBetanm - pix2nm * HBetaPix; % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook
 end
+
+%% FWHM of H-beta line for calibration of spectrometer
+
+
 
