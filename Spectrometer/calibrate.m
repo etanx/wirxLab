@@ -33,7 +33,7 @@ function [a,b] = calibrate(grating, targetnm, HImgPath, HeImgPath)
 threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
-
+HBetanm = 486.1;
 
 % if input filepaths exist
 if nargin == 4
@@ -101,7 +101,7 @@ grid on
 pixels = 1:length(img_avg);
 [peakInten, peakPos] = findpeaks(img_avg,pixels,'MinPeakHeight',threshold,...
 'SortStr','descend','NPeaks',5); 
-peakPos = sort(peakPos);
+peakPos = sort(peakPos); % sort in ascending order of pixel location (from left to right on graph)
 
 
 
@@ -111,6 +111,8 @@ peakPos = sort(peakPos);
 
 switch grating
     case 150
+        % future work: assign peakPos array to definite variables
+        % showing which peak each one represents (for readability)
         Hdistnm = 486-434; % known Hydrogen wavelengths of H beta and H gama
         Hdistpix = peakPos(3)-peakPos(1); % since we know relative position of peaks we can pick up the Hbeta and Hgama positions
         a1 = Hdistnm/Hdistpix; % one nm/pix value
@@ -121,12 +123,14 @@ switch grating
         He12 = HeDist12nm/HeDist12pix; % find two more nm/pix values
         He23 = HeDist23nm/HeDist23pix;
         a = 1/3*(He12+He23+a1); % average these values to find one nm/pix value
-        b = 486 - a * peakPos(3); % to find nm offset, always have H beta line so use that...derviation in McLennan or MacKay notebook
+        b = 486 - a * peakPos(3); % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook)
     case 1800
+        HBetaPix = peakPos(2); % pixel location of H-Beta line
+        He492Pix = peakPos(1); % pixel location of 492 nm He line
         distnm = 492-486; % known wavelengths of Hbeta and He line
-        distpix = peakPos(2)-peakPos(1); % distance in pixels
+        distpix = HBetaPix - He492Pix; % distance in pixels
         a = distnm/distpix; % nm/pixel value
-        b = 486 - a * peakPos(1); % to find nm offset, always have H beta line so use that...derviation in McLennan or MacKay notebook
+        b = HBetanm - a * HBetaPix; % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook
 end
 
 

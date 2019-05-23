@@ -28,43 +28,39 @@ function [a,b] = calibrate(grating, targetnm, HImgPath, HeImgPath)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-clear all, close all
 
 % user inputs
-
 threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+HBetanm = 486.1;
 
 % if input filepaths exist
 if nargin == 4
     % read in files from filepaths
-    HImgData = flipud(readB16(HImgPath);
-    HeImgData = flipud(readB16(HeImgPath);
+    HImgData = flipud(readB16(HImgPath));
+    HeImgData = flipud(readB16(HeImgPath));
 
-else
-    % temporary user GUI to choose images from file
-    [HFile, HPathname] = uigetfile('.b16', 'Pick a hydrogen spectra image');
+else % if user does not supply BOTH Hydrogen and Helium path
+    % user GUI to choose images from file
+    [HFile, HPathname] = uigetfile('.b16', 'Pick a hydrogen spectra image'); % title does not appear on macOS
         if isequal(HFile,0) || isequal(HPathname,0)
            disp('User pressed cancel')
         else
            disp(['User selected ', fullfile(HPathname, HFile)])
         end
 
-    [HeFile, HePathname] = uigetfile('.b16', 'Pick a helium spetra image');
+    [HeFile, HePathname] = uigetfile('.b16', 'Pick a helium spetra image');  % title does not appear on macOS
         if isequal(HeFile,0) || isequal(HePathname,0)
            disp('User pressed cancel')
         else
            disp(['User selected ', fullfile(HePathname, HeFile)])
-        end
+        end    
     
-    
-HImgData = flipud(readB16(fullfile(HPathname, HFile)));
-HeImgData = flipud(readB16(fullfile(HePathname, HeFile)));
- 
+    HImgData = flipud(readB16(fullfile(HPathname, HFile)));
+    HeImgData = flipud(readB16(fullfile(HePathname, HeFile)));
+end
+
 
 %% CLEAN UP DATA (two times, once for each image)
 
@@ -105,29 +101,38 @@ grid on
 pixels = 1:length(img_avg);
 [peakInten, peakPos] = findpeaks(img_avg,pixels,'MinPeakHeight',threshold,...
 'SortStr','descend','NPeaks',5); 
-peakPos = sort(peakPos);
+peakPos = sort(peakPos); % sort in ascending order of pixel location (from left to right on graph)
 
 
 
 %% CONVERSION: Pixels to nanometers
+% find parameters a and b that corespond to conversion of nm/pix (a) and nm offset (b): lambda_nm = a*pixels + b
+% 
 
 switch grating
     case 150
-        Hdistnm = 486-434;
-        Hdistpix = peakPos(3)-peakPos(1);
-        a1 = Hdistnm/Hdistpix;
-        HeDist12nm = 588-501;
-        HeDist12pix = peakPos(5)-peakPos(4);
-        HeDist23nm = 501-447;
+        % future work: assign peakPos array to definite variables
+        % showing which peak each one represents (for readability)
+        Hdistnm = 486-434; % known Hydrogen wavelengths of H beta and H gama
+        Hdistpix = peakPos(3)-peakPos(1); % since we know relative position of peaks we can pick up the Hbeta and Hgama positions
+        a1 = Hdistnm/Hdistpix; % one nm/pix value
+        HeDist12nm = 588-501; % distance in nm between two know He wavlengths
+        HeDist12pix = peakPos(5)-peakPos(4);  % can pick out these wavelengths since we know the relative positions
+        HeDist23nm = 501-447; %same steps
         HeDist23pix = peakPos(4)-peakPos(2);
-        He12 = HeDist12nm/HeDist12pix;
+        He12 = HeDist12nm/HeDist12pix; % find two more nm/pix values
         He23 = HeDist23nm/HeDist23pix;
-        a = 1/3*(He12+He23+a1);
+        a = 1/3*(He12+He23+a1); % average these values to find one nm/pix value
+        b = 486 - a * peakPos(3); % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook)
     case 1800
-        distnm = 492-486;
-        distpix = peakPos(2)-peakPos(1);
-        a = distnm/distpix;
+        HBetaPix = peakPos(2); % pixel location of H-Beta line
+        He492Pix = peakPos(1); % pixel location of 492 nm He line
+        distnm = 492-486; % known wavelengths of Hbeta and He line
+        distpix = HBetaPix - He492Pix; % distance in pixels
+        a = distnm/distpix; % nm/pixel value
+        b = HBetanm - a * HBetaPix; % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook
 end
+
 
 %% DISPLAY RAW SPECTRA IMAGE (Denisty.m code, probably not needed)
 % % show original greyscale figure
