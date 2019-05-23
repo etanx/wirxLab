@@ -163,7 +163,7 @@ ylabel('Intensity')
 [PeakInt,PeakPos]=findpeaks(intensity,nanoms,'MinPeakHeight',25)
 specraWavlengths = PeakPos*px2nmFactor + offset;
 hold on 
-for i=1:length(wav)
+for i=1:length(spectraWavlengths)
     text(spectraWavlengths(i),PeakInt(i),num2str(spectraWavlengths(i)))
 end
 hold off
