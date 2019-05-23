@@ -1,4 +1,4 @@
-%function [a,b] = calibrate(HImage, ArImage, HeImage, element)
+%function [a,b] = calibrate(HImage, ArImage, HeImage, grating)
 
 % INPUTS
 % grating = 150, 1800, or 3600 grating.
@@ -127,26 +127,25 @@ grid on
 %% Find Peaks
 pixels = 1:length(img_avg);
 [peakInten, peakPos] = findpeaks(img_avg,pixels,'MinPeakHeight',threshold,...
-'SortStr',descend,'NPeaks',3); 
+'SortStr',descend,'NPeaks',4); 
 
 
 
 %% get FWHM from spectra for density if there's a Hbeta line
 
 
-intensity = img_avg;
-fwhmPixels = fwhm(pixels,intensity); 
+%intensity = img_avg;
+%fwhmPixels = fwhm(pixels,intensity); 
 % ^check if this is actualyl correct since I didn't crop to the peak region only
 
 
 %% CONVERSION: Pixels to nanometers
 
-switch element
-    case hydrogen
+switch grating
+    case 150
         Hdistnm = 486-434;
         Hdistpix = peakPos(1)-peakPos(2);
-        a = Hdistnm/Hdistpix;
-    case helium
+        a1 = Hdistnm/Hdistpix;
         HeDist12nm = 588-501;
         HeDist12pix = peakPos(1)-peakPos(1);
         HeDist23nm = 501-447;
@@ -154,4 +153,6 @@ switch element
         He12 = HeDist12nm/HeDist12pix;
         He23 = HeDist23nm/HeDist23pix;
         a = .5*(He12+He23);
+    case 1800
+
 end
