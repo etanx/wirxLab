@@ -1,62 +1,66 @@
-%function [a,b] = calibrate(HImage, ArImage, HeImage, grating)
-
-
-% INPUTS
-% grating = 150, 1800, or 3600 grating.
-% gratingPosition = wavelength that the grating is looking at
-% filepath = If no file path input, prompt user to select file in GUI window
-
-% OUTPUTS
-% px2nm = Conversion factor of pixels to nm
-% px2nmFunction = Calibration function of pixels to nanometer (FUTURE WORK)
-
-
-
-
-% Copied from density.m, to edit~
-
-
-% a function to analyse spectrometer images to get calibration values
+function [a,b] = calibrate(grating, targetnm, HImgPath, HeImgPath)
+% a function to analyze spectrometer images to get calibration values
 % Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
 %
 % Revised: Ellie Tan, Jodie McLennan, Stephen McKay. May 2019.
 
+
+% INPUTS
+% grating = 150, 1800, or 3600 grooves/nm grating.
+% targetnm = wavelength that the grating is looking at (nm) 
+        %not used at the moment but will be in future work
+% HImgPath = hydrogen calibration filepath
+% HeImgPath = helium cal. image filepath
+%       If no file path input, prompt user to select file in GUI window
+
+% OUTPUTS 
+%
+% constants in equation lambda_nm = a*pixel + b
+% a = Conversion factor of pixels to nm 
+% b = Offset in nm (since 0 pixels corresponds to a nonzero value of
+% wavelength on the spectrometer)
+
+
+
 % FUTURE WORK:
+%    add functionality for selecting different areas of the spectrum with
+%    targetnm
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all, close all
 
 % user inputs
-grating = 1800;
+
 threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
-Hbetanm = 486; % wavelength in nm
-Halphanm = 656; %nm
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% use for when calibrate is a function
-%HImgData = HImage;
-%HeImgData = HeImage;
+% if input filepaths exist
+if nargin == 4
+    % read in files from filepaths
+    HImgData = flipud(readB16(HImgPath);
+    HeImgData = flipud(readB16(HeImgPath);
 
+else % if user does not supply BOTH Hydrogen and Helium path
+    % temporary user GUI to choose images from file
+    [HFile, HPathname] = uigetfile('.b16', 'Pick a hydrogen spectra image'); % title does not appear on macOS
+        if isequal(HFile,0) || isequal(HPathname,0)
+           disp('User pressed cancel')
+        else
+           disp(['User selected ', fullfile(HPathname, HFile)])
+        end
 
-% temporary user GUI to choose images from file
-[HFile, HPathname] = uigetfile('.b16', 'Pick a hydrogen spectra image');
-    if isequal(HFile,0) || isequal(HPathname,0)
-       disp('User pressed cancel')
-    else
-       disp(['User selected ', fullfile(HPathname, HFile)])
-    end
-    
-[HeFile, HePathname] = uigetfile('.b16', 'Pick a helium spetra image');
-    if isequal(HeFile,0) || isequal(HePathname,0)
-       disp('User pressed cancel')
-    else
-       disp(['User selected ', fullfile(HePathname, HeFile)])
-    end
-    
+    [HeFile, HePathname] = uigetfile('.b16', 'Pick a helium spetra image');  % title does not appear on macOS
+        if isequal(HeFile,0) || isequal(HePathname,0)
+           disp('User pressed cancel')
+        else
+           disp(['User selected ', fullfile(HePathname, HeFile)])
+        end
+end    
     
 HImgData = flipud(readB16(fullfile(HPathname, HFile)));
 HeImgData = flipud(readB16(fullfile(HePathname, HeFile)));
