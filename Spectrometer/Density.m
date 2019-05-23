@@ -131,6 +131,9 @@ fwhmPixels = fwhm(pixels,intensity);
 % grating. Then the hardcoded conversion factors can be replaced by this
 % function.
 
+
+[a,b]=calibrate(grating)
+%%
 switch grating
     case 3600
         disp("Using conversion for 3600 grating.")
@@ -142,8 +145,8 @@ switch grating
         disp("Using conversion for 150 grating.")
         px2nmFactor = 0.115;     
 end
-
-fwhm_nm = fwhmPixels*px2nmFactor;
+%%
+fwhm_nm = fwhmPixels*a;
 
 if Hbeta2density == 1
     
