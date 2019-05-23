@@ -1,9 +1,5 @@
 function [pix2nm,offset] = calibrate(grating, targetnm, HImgPath, HeImgPath)
-% a function to analyze spectrometer images to get calibration values.
-% Returns the slope (pix2nm) and intercept (offset) of the spectrometer's
-% pixel-to-wavelength conversion line. Also determines the instrument error
-% by finding the FWHM of the H-beta line.
-%
+% a function to analyze spectrometer images to get calibration values
 % Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
 %
 % Revised: Ellie Tan, Jodie McLennan, Stephen McKay. May 2019.
@@ -141,7 +137,4 @@ switch grating
         offset = HBetanm - pix2nm * HBetaPix; % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook
 end
 
-%% FWHM of H-beta line for calibration of spectrometer
-
-
-
+%% 
