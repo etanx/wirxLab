@@ -29,12 +29,14 @@ function [a,b] = calibrate(grating, targetnm, HImgPath, HeImgPath)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% user inputs
+% user-inputted image parameters
 threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
-HBetanm = 486.1;
 
+HBetanm = 486.1; % constant value of H-Beta line in nm
+
+%% READ IN IMAGE FILES
 % if input filepaths exist
 if nargin == 4
     % read in files from filepaths
@@ -45,14 +47,14 @@ else % if user does not supply BOTH Hydrogen and Helium path
     % user GUI to choose images from file
     [HFile, HPathname] = uigetfile('.b16', 'Pick a hydrogen spectra image'); % title does not appear on macOS
         if isequal(HFile,0) || isequal(HPathname,0)
-           disp('User pressed cancel')
+           error('User pressed cancel')
         else
            disp(['User selected ', fullfile(HPathname, HFile)])
         end
 
     [HeFile, HePathname] = uigetfile('.b16', 'Pick a helium spetra image');  % title does not appear on macOS
         if isequal(HeFile,0) || isequal(HePathname,0)
-           disp('User pressed cancel')
+           error('User pressed cancel')
         else
            disp(['User selected ', fullfile(HePathname, HeFile)])
         end    
@@ -82,19 +84,22 @@ HImgOffset = HImgData - HImgBackground;
 HeImgOffset = HeImgData - HeImgBackground;
 
 
-% combined image using both spectra
-combImage = HImgOffset + HeImgOffset;
+
 
 
 %% Average intensity vertically for height of line
-img_avg = mean( combImage(lineHeight,:),1 ); % take vertical average of the line.
 
-% Plot 1D average intensity
-figure;
-plot(img_avg)
-xlabel('Width (pixels)')
-ylabel('Line-Averaged Intensity')
-grid on
+combImage = HImgOffset + HeImgOffset; % combined image using both hydrogen and helium images
+
+img_avg = mean( combImage(lineHeight,:),1 ); % take vertical average of the image (within lineHeight range).
+
+% commented out so not to display plot when using Density.m
+% % Plot 1D average intensity
+% figure;
+% plot(img_avg)
+% xlabel('Width (pixels)')
+% ylabel('Line-Averaged Intensity')
+% grid on
 
 
 %% Find Peaks
@@ -132,51 +137,4 @@ switch grating
         a = distnm/distpix; % nm/pixel value
         b = HBetanm - a * HBetaPix; % to find nm offset, plug in pixel and known nm value for H-beta line (derviation in McLennan or McKay notebook
 end
-
-
-%% DISPLAY RAW SPECTRA IMAGE (Denisty.m code, probably not needed)
-% % show original greyscale figure
-% figure
-% fig = imagesc(HImgData); 
-% colormap 'gray'; %Convert figure into a RGB 'jet' or grayscale 'gray' image.
-% set(gca, 'Visible', 'off')
-% %text(5,40,num2str(shot),'Color','white') % label shot number on image
-% 
-% % Show 3D figure
-% height = 1:1:size(HImgData,1);
-% width = 1:1:size(HImgData,2);
-% figure;
-% [X, Y] = meshgrid(width, height);
-% Z = HImgData;
-% fig = surf(X,Y,Z);
-% colormap 'jet'; %Use 'jet' for more interesting looking pictures.
-% set(fig, 'EdgeColor', 'none');
-% xlabel('Width (px)')
-% ylabel('Height (px)')
-% zlabel('Intensity')
-% title('Raw Image')
-% 
-
-% Show 3D figure without background offset subtracted
-% height = 1:1:size(imgOffset,1);
-% width = 1:1:size(imgOffset,2);
-% figure;
-% [X, Y] = meshgrid(width, height);
-% Z = imgOffset;
-% fig = surf(X,Y,Z);
-% colormap 'jet'; %Use 'jet' for more interesting looking pictures.
-% set(fig, 'EdgeColor', 'none');
-% xlabel('Width (px)')
-% ylabel('Height (px)')
-% zlabel('Intensity')
-% title('Background-subtracted')
-
-%There is an optional section you can include here. Code at the end of script.
-%It can clean up data, but is difficult to deal with multiple peaks!
-
-% get FWHM from spectra for density if there's a Hbeta line
-
-%intensity = img_avg;
-%fwhmPixels = fwhm(pixels,intensity); 
-% ^check if this is actualyl correct since I didn't crop to the peak region only
 
