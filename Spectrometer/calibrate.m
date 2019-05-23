@@ -28,8 +28,8 @@
 clear all, close all
 
 % user inputs
-
-threshold = 150; % threshold intensity to identify peaks
+grating = 1800;
+threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
 Hbetanm = 486; % wavelength in nm
@@ -83,7 +83,7 @@ HeImgOffset = HeImgData - HeImgBackground;
 
 
 % combined image using both spectra
-combImage = HImgOffset + HeImageOffset;
+combImage = HImgOffset + HeImgOffset;
 
 
 %% Average intensity vertically for height of line
@@ -100,7 +100,7 @@ grid on
 %% Find Peaks
 pixels = 1:length(img_avg);
 [peakInten, peakPos] = findpeaks(img_avg,pixels,'MinPeakHeight',threshold,...
-'SortStr',descend,'NPeaks',5); 
+'SortStr','descend','NPeaks',5); 
 peakPos = sort(peakPos);
 
 
@@ -120,7 +120,7 @@ switch grating
         He23 = HeDist23nm/HeDist23pix;
         a = 1/3*(He12+He23+a1);
     case 1800
-        distnm = 486-492;
+        distnm = 492-486;
         distpix = peakPos(2)-peakPos(1);
         a = distnm/distpix;
 end
