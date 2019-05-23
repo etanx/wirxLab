@@ -114,6 +114,8 @@ ylabel('Line-Averaged Intensity')
 grid on
 
 
+
+
 %%There is an optional section you can include here. Code at the end of script.
 %It can clean up data, but is difficult to deal with multiple peaks!
 
@@ -150,52 +152,22 @@ fprintf('Electron density n_e = %4.2e /m^3\n',n_e)
 end
 
 
-%%     
-% Plot spectra in nanometers
-% EDIT: This doesn't work cuz conversion is relative spacing, not absolute!
-% intensity = img_avg;
-% wavelengths = [1:length(img_avg)].*gratingFactor;
-% figure;
-% plot(wavelengths,intensity)
-% xlabel('Wavelength (nm)')
-% ylabel('Radiance/Intensity (some unit)')
-% grid on
+%% Plot spectra in nanometers
 
+% Spectra plotted with wavelengths
+nanoms = pixels*px2nmFactor;
+figure
+plot(nanoms,intensity)
+xlabel('Wavelength (nm)')
+ylabel('Intensity')
+[PeakInt,PeakPos]=findpeaks(intensity,nanoms,'MinPeakHeight',25)
+specraWavlengths = PeakPos*px2nmFactor + offset;
+hold on 
+for i=1:length(wav)
+    text(spectraWavlengths(i),PeakInt(i),num2str(spectraWavlengths(i)))
+end
+hold off
 
-
-%%Optional data processing section
-% % set background to zero to reduce non-peak noise?
-% disp('Setting background to 0 intensity...')
-% imgPeaks = img_avg;
-% 
-% % roughly locate not-peak areas based on intensity ratio
-% disp('Locating peaks...')
-% peaksYes = find(img_avg >= threshold);
-% peakMiddle = median(peaksYes);
-% peaksNope = find(img_avg < threshold);
-
-%%modify peak area to include user-defined line width
-% makeWider = not(ismember(peaksNope,lineWidth)); % areas to keep
-% peaksNopeWide = peaksNope(makeWider);
-% imgPeaks(peaksNopeWide) = 0; % set non-peak area to zero
-%%NOTE: Not satisfied with the above because then code can only deal with
-% one peak. What about cases where there are multiple ones?
-
-% peakWidthHalf = round(lineWidth./2);
-% peaksRight = peakMiddle + peakWidthHalf;
-% peaksLeft = peakMiddle - peakWidthHalf;
-
-
-%imgPeaks(peaksNopeWide) = 0;
-
-
-% % Plot 1D vertically-averaged intensity
-% figure;
-% plot(imgPeaks)
-% xlabel('Width (pixels)')
-% ylabel('Peak Intensity')
-% title('Peak Only')
-% grid on
 
 
 

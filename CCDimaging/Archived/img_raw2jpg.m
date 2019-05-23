@@ -4,11 +4,15 @@
 
 clear all, close all
 
-shot = '1190305006';
-folder = 'C:\Users\Plasma\Box\elizabethtan\2018-19 WIRX Honors Thesis\Images and Figures\ccd_raw\';
-img = readB16([folder shot 'a.b16']);
+% shot = '1190305006';
+% folder = 'C:\Users\Plasma\Box\elizabethtan\2018-19 WIRX Honors Thesis\Images and Figures\ccd_raw\';
+% img = readB16([folder shot 'a.b16']);
 
-%figure('Position',[0 0 1280 1024]);
+% Get location of image file from user
+[fileName,fileFolder] = uigetfile(path); % select .b16 raw image file in GUI window
+filePath = [fileFolder fileName];
+img = readB16(filePath); % flip upside down image?  
+
 figure
 clims = [50,300];
 fig = imagesc(flipud(img),clims)
