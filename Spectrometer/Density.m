@@ -13,13 +13,74 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all, close all
 
-% user inputs
-[shot, grating, targetnm = inputdlg({'Enter shot number:','Enter grating value:','Enter wavelength:'}, );
-grating = 1800; % user defined grating spacing grooves/nm (150, 1800, or 3600)
-targetnm = 486; % wavelength spectrometer is centered on (nm)
+%% ASK USER FOR INPUTS
+% first get shot, grating, wavelength
+% then load calibration images if they exist (and give user option to
+% choose new ones)
+% otherwise ask for new ones no matter what
+numlines  = 1; % lines per answer in user input dialog
+defaults = {'1190517010', '1800', '486'}; % default answers for shot, grating, wavelength
+inputs = inputdlg({'Enter shot number:','Enter grating value:','Enter wavelength:'},'Inputs for Density Analysis', numlines, defaults);
+	shot = str2double(inputs(1)); % shot number
+    grating = str2double(inputs(2)); % user defined grating spacing grooves/nm (150, 1800, or 3600)
+    targetnm = str2double(inputs(3)); % wavelength spectrometer is centered on (nm)
 
-calibHImg = 0;
-calibHeImg = 0;
+% Get or load Calibration Images
+
+% check to see if previous calibration image filepaths exist
+try
+    
+    load('calImages.mat'); % try to load previous images
+           % note: it's possible that previous images do exist as variables
+           % in calImages.mat but are not a file name, if they were saved
+           % previously as empty variables (or maybe just equal to '\' or
+           % something). Delete calImages.mat and try again.
+           
+    % check to see if user wants to input calibration images
+    answer = questdlg('New H and He Calibration Images?');
+
+    if answer == 'yes' % if user wants new files 
+       
+       %get Hydrogen and Helium calibration images 
+       [calHFile,calHPath] = uigetfile('.b16');
+       if calHPath == 0
+        error('No hydrogen image to read.')
+       end
+       calHImg = fullfile(calHPath, calHFile); % full path and filename
+       
+       [calHeFile,calHePath] = uigetfile('.b16');
+       if calHePath == 0
+        error('No helium image to read.')
+       end
+       calHeImg = fullfile(calHePath, calHeFile);
+    end
+       % save paths to file to use next time (only if filepaths are correctly
+       % chosen)
+       save('calImages.mat', 'calHImg', 'calHeImg');
+       
+catch
+       % if error occured while loading file (i.e. no previous images
+       % exist)
+       uiwait(msgbox('Select New H and He Calibation Images','modal')); % tell user that he or she is selecting new images
+       [calHFile,calHPath] = uigetfile('.b16'); %  same as above
+       if calHPath == 0
+        error('No helium image to read.')
+       end
+       calHImg = fullfile(calHPath, calHFile);
+       
+       [calHeFile,calHePath] = uigetfile('.b16');
+       if calHePath == 0
+        error('No helium image to read.')
+       end
+       calHeImg = fullfile(calHePath, calHeFile);
+       
+       % only save to file if filepaths are chosen
+       save('calImages.mat', 'calHImg', 'calHeImg');
+  
+end
+
+
+% Hardcoded Inputs 
 
 threshold = 150; % threshold intensity to identify peaks (will vary depending on line)
 lineHeight =(320:645); % Vertical range of line (pixels). If too large, might introduce optical aberrations of spectrometer such as curvatures.
@@ -34,6 +95,7 @@ localFile = 1; % Use 1 for 'YES'
 
 if localFile == 1
     % do you have a local file? Load it!
+    uiwait(msgbox('Select Image to be Analyzed','modal')); % tell user to select plasma spectroscopy image
     [fileName, filePath] = uigetfile('.b16'); % select .b16 raw image file in GUI window
     if filePath == 0
         error('No image to read.')
@@ -129,7 +191,7 @@ pixels = 1:length(img_avg);
        % configuration. offset is the wavelength value at the 0-pixel
        % location, and HLampFWHM is the width of the H-beta line in the
        % calibration shot.
-[px2nmFactor, offset, HLampFWHM] = calibrate(grating, targetnm, 0, calibHImg, calibHeImg);
+[px2nmFactor, offset, HLampFWHM] = calibrate(grating, targetnm, 0, calHImg, calHeImg);
 
 fwhm_nm = FWHMPix*px2nmFactor; % find FWHM of image in nm
 
