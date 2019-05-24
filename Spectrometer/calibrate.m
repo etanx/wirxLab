@@ -4,6 +4,8 @@ function [pix2nm,offset, HBetaFWHM] = calibrate(grating, targetnm, doPlot, HImgP
 % pixel-to-wavelength conversion line. Also determines the instrument error
 % by finding the FWHM of the H-beta line.
 %
+% For current script calibration images need to be taken either at 486nm with 1800 grating or 550nm with 150 grating
+%
 % Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
 %
 % Revised: Ellie Tan, Jodie McLennan, Stephen McKay. May 2019.
@@ -119,13 +121,13 @@ peakPos = sort(peakPos); % sort in ascending order of pixel location (from left 
 
 %% CONVERSION: Pixels to nanometers
 % find parameters a and b that corespond to conversion of nm/pix (a) and nm offset (b): lambda_nm = a*pixels + b
-% 
+% wavelength values are found on the website http://hyperphysics.phy-astr.gsu.edu/hbase/quantum/atspect.html
 
 switch grating
     case 150
         % future work: assign peakPos array to definite variables
         % showing which peak each one represents (for readability)
-        Hdistnm = 486.133-434.047; % known Hydrogen wavelengths of H beta and H gama
+        Hdistnm = HBetanm-434.047; % known Hydrogen wavelengths of H beta and H gama
         Hdistpix = peakPos(3)-peakPos(1); % since we know relative position of peaks we can pick up the Hbeta and Hgama positions
         a1 = Hdistnm/Hdistpix; % one nm/pix value
         HeDist12nm = 587.562-501.567; % distance in nm between two know He wavlengths
