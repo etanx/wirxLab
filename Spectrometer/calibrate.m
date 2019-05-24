@@ -38,8 +38,10 @@ threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
 
-HBetanm = 486.1; % constant value of H-Beta line in nm
-He492nm = 492.; % constant value of He-492 line in nm (make more precise later)
+HBetanm = 486.133; % constant value of H-Beta line in nm
+He492nm = 492.193; % constant value of He-492 line in nm 
+% wavelength values found from http://hyperphysics.phy-astr.gsu.edu/hbase/quantum/atspect.html
+
 %% READ IN IMAGE FILES
 % if input filepaths exist
 if HImgPath ~= 0 && HeImgPath ~= 0
@@ -123,12 +125,12 @@ switch grating
     case 150
         % future work: assign peakPos array to definite variables
         % showing which peak each one represents (for readability)
-        Hdistnm = 486-434; % known Hydrogen wavelengths of H beta and H gama
+        Hdistnm = 486.133-434.047; % known Hydrogen wavelengths of H beta and H gama
         Hdistpix = peakPos(3)-peakPos(1); % since we know relative position of peaks we can pick up the Hbeta and Hgama positions
         a1 = Hdistnm/Hdistpix; % one nm/pix value
-        HeDist12nm = 588-501; % distance in nm between two know He wavlengths
+        HeDist12nm = 587.562-501.567; % distance in nm between two know He wavlengths
         HeDist12pix = peakPos(5)-peakPos(4);  % can pick out these wavelengths since we know the relative positions
-        HeDist23nm = 501-447; %same steps
+        HeDist23nm = 501.567-447.148; %same steps
         HeDist23pix = peakPos(4)-peakPos(2);
         He12 = HeDist12nm/HeDist12pix; % find two more nm/pix values
         He23 = HeDist23nm/HeDist23pix;
