@@ -14,8 +14,8 @@ function [pix2nm,offset, HBetaFWHM] = calibrate(grating, targetnm, doPlot, HImgP
 % targetnm = wavelength that the grating is looking at (nm) 
         %not used at the moment but will be in future work
 % 
-% HImgPath = hydrogen calibration filepath
-% HeImgPath = helium cal. image filepath
+% HImgPath = hydrogen calibration filepath (if 0, prompts user for file)
+% HeImgPath = helium cal. image filepath   (if 0, prompts user for file)
 %       If no file path input, prompt user to select file in GUI window
 
 % OUTPUTS 
@@ -42,7 +42,7 @@ HBetanm = 486.1; % constant value of H-Beta line in nm
 He492nm = 492.231; % constant value of He-492 line in nm (make more precise later)
 %% READ IN IMAGE FILES
 % if input filepaths exist
-if nargin == 5
+if HImgPath ~= 0 && HeImgPath ~= 0
     % read in files from filepaths
     HImgData = rot90(readB16(HImgPath),2); % rotate 180 since pic is upside down and backwards
     HeImgData = rot90(readB16(HeImgPath),2);

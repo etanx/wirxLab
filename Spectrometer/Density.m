@@ -16,11 +16,10 @@ clear all, close all
 % user inputs
 shot = 1190517010;
 grating = 1800; % user defined grating spacing grooves/nm (150, 1800, or 3600)
-targetnm = 486 % wavelength spectrometer is centered on (nm)
+targetnm = 486; % wavelength spectrometer is centered on (nm)
 
-% filepaths to calibration images
-% HPath = '/Users/smckay/Downloads/Calibration Images-selected/1190523_1800_486_H1.b16';
-% HePath = '/Users/smckay/Downloads/Calibration Images-selected/1190523_1800_486_He3.b16';
+calibHImg = 0;
+calibHeImg = 0;
 
 
 threshold = 150; % threshold intensity to identify peaks (will vary depending on line)
@@ -28,19 +27,19 @@ lineHeight =(320:645); % Vertical range of line (pixels). If too large, might in
 lineWidth = (685-630); % broadened line width to take into account. Make sure it is not too small to keep the curve shape.
 
 Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
-localFile = 0; % Use 1 for 'YES' 
+localFile = 1; % Use 1 for 'YES' 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% EXTRACT IMAGE DATA FROM WIRX TREE OR LOCAL FILE
 
 if localFile == 1
-    % do you have a local file? Load it! File must be in same path as workspace
-    filePath = uigetfile(path); % select .b16 raw image file in GUI window
+    % do you have a local file? Load it!
+    [fileName, filePath] = uigetfile('.b16'); % select .b16 raw image file in GUI window
     if filePath == 0
         error('No image to read.')
     end
-    imgData = flipud(readB16(filePath)); % flip upside down image?  
+    imgData = flipud(readB16(filePath, fileName)); % flip upside down image?  
 else
 % If no local file, extract from tree
 % NOTE: Make sure data has been written to tree with ccd2tree.m! Using this method 
@@ -54,27 +53,28 @@ mdsdisconnect;
 
 end
 
-%% DISPLAY RAW SPECTRA IMAGE
-% show original greyscale figure
-figure
-fig = imagesc(imgData); 
-colormap 'gray'; %Convert figure into a RGB 'jet' or grayscale 'gray' image.
-set(gca, 'Visible', 'off')
-text(5,40,num2str(shot),'Color','white') % label shot number on image
+%% DISPLAY RAW SPECTRA IMAGE (Uncomment to show raw images)
+% % show original greyscale figure
+% figure
+% fig = imagesc(imgData); 
+% colormap 'gray'; %Convert figure into a RGB 'jet' or grayscale 'gray' image.
+% set(gca, 'Visible', 'off')
+% text(5,40,num2str(shot),'Color','white') % label shot number on image
 
-% Show 3D figure
-height = 1:1:size(imgData,1);
-width = 1:1:size(imgData,2);
-figure;
-[X, Y] = meshgrid(width, height);
-Z = imgData;
-fig = surf(X,Y,Z);
-colormap 'jet'; %Use 'jet' for more interesting looking pictures.
-set(fig, 'EdgeColor', 'none');
-xlabel('Width (px)')
-ylabel('Height (px)')
-zlabel('Intensity')
-title('Raw Image')
+
+% % Show 3D figure
+% height = 1:1:size(imgData,1);
+% width = 1:1:size(imgData,2);
+% figure;
+% [X, Y] = meshgrid(width, height);
+% Z = imgData;
+% fig = surf(X,Y,Z);
+% colormap 'jet'; %Use 'jet' for more interesting looking pictures.
+% set(fig, 'EdgeColor', 'none');
+% xlabel('Width (px)')
+% ylabel('Height (px)')
+% zlabel('Intensity')
+% title('Raw Image')
 
 
 %% CLEAN UP DATA
@@ -89,19 +89,19 @@ background = mean(mean(imgBackground,1)); % average intensity excluding peaks
 disp('Subtracting background...')
 imgOffset = imgData - imgBackground; 
 
-% Show 3D figure without background offset subtracted
-height = 1:1:size(imgOffset,1);
-width = 1:1:size(imgOffset,2);
-figure;
-[X, Y] = meshgrid(width, height);
-Z = imgOffset;
-fig = surf(X,Y,Z);
-colormap 'jet'; %Use 'jet' for more interesting looking pictures.
-set(fig, 'EdgeColor', 'none');
-xlabel('Width (px)')
-ylabel('Height (px)')
-zlabel('Intensity')
-title('Background-subtracted')
+% % Show 3D figure without background offset subtracted (Uncomment to view)
+% height = 1:1:size(imgOffset,1);
+% width = 1:1:size(imgOffset,2);
+% figure;
+% [X, Y] = meshgrid(width, height);
+% Z = imgOffset;
+% fig = surf(X,Y,Z);
+% colormap 'jet'; %Use 'jet' for more interesting looking pictures.
+% set(fig, 'EdgeColor', 'none');
+% xlabel('Width (px)')
+% ylabel('Height (px)')
+% zlabel('Intensity')
+% title('Background-subtracted')
 
 % Average intensity vertically for height of line
 img_avg = mean( imgOffset(lineHeight,:),1 ); % take vertical average of the line.
@@ -110,20 +110,16 @@ img_avg = mean( imgOffset(lineHeight,:),1 ); % take vertical average of the line
 figure;
 plot(img_avg)
 xlabel('Width (pixels)')
-ylabel('Line-Averaged Intensity')
+ylabel('Intensity (from CamWare)')
+title('Average Intensity over Vertical Spectral Lines')
 grid on
 
-
-
-
-%%There is an optional section you can include here. Code at the end of script.
-%It can clean up data, but is difficult to deal with multiple peaks!
 
 
 %% get FWHM from spectra for density if there's a Hbeta line
 
 pixels = 1:length(img_avg);
-[HBetaVal, HBetaLoc, HBetaFWHM] = findpeaks(img_avg,pixels,'WidthReference','halfheight','SortStr','descend','NPeaks',1); % pull out max peak location in pixels, assuming this is H-Beta
+[HBetaVal, HBetaLoc, FWHMPix] = findpeaks(img_avg,pixels,'WidthReference','halfheight','SortStr','descend','NPeaks',1); % pull out max peak location in pixels, assuming this is H-Beta
 % pulls out intensity, location, and width of H-Beta peak. We only use the
 % width in our script (as the FWHM)
 
@@ -134,9 +130,9 @@ pixels = 1:length(img_avg);
        % configuration. offset is the wavelength value at the 0-pixel
        % location, and HLampFWHM is the width of the H-beta line in the
        % calibration shot.
-[px2nmFactor, offset, HLampFWHM] = calibrate(grating, targetnm, 0);
+[px2nmFactor, offset, HLampFWHM] = calibrate(grating, targetnm, 0, calibHImg, calibHeImg);
 
-fwhm_nm = fwhmPixels*px2nmFactor; % find FWHM of image in nm
+fwhm_nm = FWHMPix*px2nmFactor; % find FWHM of image in nm
 
 
 if Hbeta2density == 1
@@ -156,14 +152,16 @@ end
 
 % Spectra plotted with wavelengths
 nanoms = pixels*px2nmFactor + offset;
+intensity = img_avg;
 figure
-plot(nanoms,intensity)
+plot(nanoms,intensity) % graph of intensity vs nanometers
 xlabel('Wavelength (nm)')
 ylabel('Intensity')
-[PeakInt,PeakPos]=findpeaks(intensity,nanoms,'MinPeakHeight',25)
+title('Avg. Intensity vs Wavelength')
+[PeakInt,PeakPos] = findpeaks(intensity,nanoms,'MinPeakHeight',50); % identifies all peaks above the threshhold value MinPeakHeight
 hold on 
 for i=1:length(PeakPos)
-    text(PeakPos(i),PeakInt(i),num2str(PeakPos(i)))
+    text(PeakPos(i),PeakInt(i),num2str(PeakPos(i))) % put wavelength labels on peaks
 end
 hold off
 
