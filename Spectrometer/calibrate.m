@@ -39,7 +39,7 @@ lineHeight =(303:653); % Vertical start-end location of line (pixels). If too la
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
 
 HBetanm = 486.1; % constant value of H-Beta line in nm
-He492nm = 492.231; % constant value of He-492 line in nm (make more precise later)
+He492nm = 492.; % constant value of He-492 line in nm (make more precise later)
 %% READ IN IMAGE FILES
 % if input filepaths exist
 if HImgPath ~= 0 && HeImgPath ~= 0
