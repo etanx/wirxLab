@@ -21,7 +21,10 @@ clear all, close all
 numlines  = 1; % lines per answer in user input dialog
 defaults = {'1190517010', '1800', '486'}; % default answers for shot, grating, wavelength
 inputs = inputdlg({'Enter shot number:','Enter grating value:','Enter wavelength:'},'Inputs for Density Analysis', numlines, defaults);
-	shot = str2double(inputs(1)); % shot number
+	if length(inputs) < 3
+        error('Not enough inputs');
+    end
+    shot = str2double(inputs(1)); % shot number
     grating = str2double(inputs(2)); % user defined grating spacing grooves/nm (150, 1800, or 3600)
     targetnm = str2double(inputs(3)); % wavelength spectrometer is centered on (nm)
 
@@ -39,19 +42,13 @@ try
     % check to see if user wants to input calibration images
     answer = questdlg('New H and He Calibration Images?');
 
-    if answer == 'yes' % if user wants new files 
+    if strcmp(answer, 'yes') % if answer is equal to 'yes' (i.e. user wants new files) 
        
        %get Hydrogen and Helium calibration images 
        [calHFile,calHPath] = uigetfile('.b16');
-       if calHPath == 0
-        error('No hydrogen image to read.')
-       end
        calHImg = fullfile(calHPath, calHFile); % full path and filename
        
        [calHeFile,calHePath] = uigetfile('.b16');
-       if calHePath == 0
-        error('No helium image to read.')
-       end
        calHeImg = fullfile(calHePath, calHeFile);
     end
        % save paths to file to use next time (only if filepaths are correctly
@@ -64,7 +61,7 @@ catch
        uiwait(msgbox('Select New H and He Calibation Images','modal')); % tell user that he or she is selecting new images
        [calHFile,calHPath] = uigetfile('.b16'); %  same as above
        if calHPath == 0
-        error('No helium image to read.')
+        error('No hydrogen image to read.')
        end
        calHImg = fullfile(calHPath, calHFile);
        

@@ -47,7 +47,7 @@ He492nm = 492.193; % constant value of He-492 line in nm
 
 %% READ IN IMAGE FILES
 % if input filepaths exist
-if HImgPath ~= 0 && HeImgPath ~= 0
+if nargin == 5
     % read in files from filepaths
     HImgData = rot90(readB16(HImgPath),2); % rotate 180 since pic is upside down and backwards
     HeImgData = rot90(readB16(HeImgPath),2);
