@@ -4,6 +4,8 @@ function [pix2nm,offset, HBetaFWHM] = calibrate(grating, targetnm, doPlot, HImgP
 % pixel-to-wavelength conversion line. Also determines the instrument error
 % by finding the FWHM of the H-beta line.
 %
+% For current script calibration images need to be taken either at 486nm with 1800 grating or 550nm with 150 grating
+%
 % Based on scripts: Temp.m, spectraFWHM, fwhm2Ne, RawSpectra.m by Michael Morken, David Blasing, and Isaac fugate.
 %
 % Revised: Ellie Tan, Jodie McLennan, Stephen McKay. May 2019.
@@ -38,8 +40,11 @@ threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
 
-HBetanm = 486.136; % constant value of H-Beta line in nm
-He492nm = 492.193; % constant value of He-492 line in nm (make more precise later)
+HBetanm = 486.133; % constant value of H-Beta line in nm
+He492nm = 492.193; % constant value of He-492 line in nm 
+% wavelength values found from http://hyperphysics.phy-astr.gsu.edu/hbase/quantum/atspect.html
+
+
 %% READ IN IMAGE FILES
 % if input filepaths exist
 if HImgPath ~= 0 && HeImgPath ~= 0
@@ -117,18 +122,18 @@ peakPos = sort(peakPos); % sort in ascending order of pixel location (from left 
 
 %% CONVERSION: Pixels to nanometers
 % find parameters a and b that corespond to conversion of nm/pix (a) and nm offset (b): lambda_nm = a*pixels + b
-% 
+% wavelength values are found on the website http://hyperphysics.phy-astr.gsu.edu/hbase/quantum/atspect.html
 
 switch grating
     case 150
         % future work: assign peakPos array to definite variables
         % showing which peak each one represents (for readability)
-        Hdistnm = 486-434; % known Hydrogen wavelengths of H beta and H gama
+        Hdistnm = HBetanm-434.047; % known Hydrogen wavelengths of H beta and H gama
         Hdistpix = peakPos(3)-peakPos(1); % since we know relative position of peaks we can pick up the Hbeta and Hgama positions
         a1 = Hdistnm/Hdistpix; % one nm/pix value
-        HeDist12nm = 588-501; % distance in nm between two know He wavlengths
+        HeDist12nm = 587.562-501.567; % distance in nm between two know He wavlengths
         HeDist12pix = peakPos(5)-peakPos(4);  % can pick out these wavelengths since we know the relative positions
-        HeDist23nm = 501-447; %same steps
+        HeDist23nm = 501.567-447.148; %same steps
         HeDist23pix = peakPos(4)-peakPos(2);
         He12 = HeDist12nm/HeDist12pix; % find two more nm/pix values
         He23 = HeDist23nm/HeDist23pix;
