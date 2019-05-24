@@ -42,7 +42,7 @@ try
     % check to see if user wants to input calibration images
     answer = questdlg('New H and He Calibration Images?');
 
-    if strcmp(answer, 'yes') % if answer is equal to 'yes' (i.e. user wants new files) 
+    if strcmp(answer, 'Yes') % if answer is equal to 'yes' (i.e. user wants new files) 
        
        %get Hydrogen and Helium calibration images 
        [calHFile,calHPath] = uigetfile('.b16');
