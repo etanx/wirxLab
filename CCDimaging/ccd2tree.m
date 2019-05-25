@@ -20,7 +20,7 @@ clear all, close all
 % indicates cam1 (electrode) or cam2 (spectrometer).
 
 % Input camerasettings and shot number
-shot = 1190517020;
+shot = 1190524001;
 
 % DICAM1 info
 expo_cam1 = 500; % exposure of electrode camera1 (ns)
