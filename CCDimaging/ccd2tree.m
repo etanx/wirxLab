@@ -19,20 +19,20 @@ clear all, close all
 % with filename format like 1190409005a.b16 where the alphabet a or b at the end 
 % indicates cam1 (electrode) or cam2 (spectrometer).
 
-% Input camerasettings and shot number
-shot = 1190524001;
+% Input camera settings and shot number
+shot = 1190524015;
 
 % DICAM1 info
 expo_cam1 = 500; % exposure of electrode camera1 (ns)
-delay_cam1 = 100e3; % Delay time (ns)
+delay_cam1 = 60e3; % Delay time (ns)
 gain_cam1 = 40; % camera gain usually not changed
 
 % second frame of camera1
 expo_cam1_a2 = 500;
-delay_cam1_a2 = 102e3;
+delay_cam1_a2 = 62e3;
 
 % DICAM2 info
-expo_cam2 = 50e3; % exposure of spectrometer camera2 (ns) 
+expo_cam2 = 15e3; % exposure of spectrometer camera2 (ns) 
 delay_cam2 = 50e6; % Delay time (ns)
 gain_cam2 = gain_cam1;
 
