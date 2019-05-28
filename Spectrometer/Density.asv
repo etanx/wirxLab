@@ -97,7 +97,7 @@ if localFile == 1
     if filePath == 0
         error('No image to read.')
     end
-    imgData = rot90(readB16(filePath, fileName),2); % flip upside down image?  
+    imgData = rot90(readB16(filePath, fileName)),2); % flip upside down image?  
 else
 % If no local file, extract from tree
 % NOTE: Make sure data has been written to tree with ccd2tree.m! Using this method 
@@ -105,7 +105,7 @@ else
 % If there's no data in the tree, Traverser will show the value font in purple. And you will get errors, of course.
 mdsconnect('WIRX07');
 mdsopen('wirxtree',shot);
-imgData = rot90(mdsvalue( 'ICCD.DICAM2:FRAME1' ),2); % raw image was upside down
+imgData = rot90(mdsvalue( 'ICCD.DICAM2:FRAME1' )),2); % raw image was upside down
 mdsclose;
 mdsdisconnect;
 
