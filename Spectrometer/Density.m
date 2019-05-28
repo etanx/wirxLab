@@ -19,7 +19,7 @@ clear all, close all
 % choose new ones)
 % otherwise ask for new ones no matter what
 numlines  = 1; % lines per answer in user input dialog
-defaults = {'1190517010', '1800', '486'}; % default answers for shot, grating, wavelength
+defaults = {'1190524007', '1800', '486'}; % default answers for shot, grating, wavelength
 inputs = inputdlg({'Enter shot number:','Enter grating value:','Enter wavelength:'},'Inputs for Density Analysis', numlines, defaults);
 	if length(inputs) < 3
         error('Not enough inputs');
@@ -84,7 +84,7 @@ lineHeight =(320:645); % Vertical range of line (pixels). If too large, might in
 lineWidth = (685-630); % broadened line width to take into account. Make sure it is not too small to keep the curve shape.
 
 Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
-localFile = 1; % Use 1 for 'YES' 
+localFile = 0; % Use 1 for 'YES' 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
