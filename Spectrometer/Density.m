@@ -84,7 +84,7 @@ lineHeight =(320:645); % Vertical range of line (pixels). If too large, might in
 lineWidth = (685-630); % broadened line width to take into account. Make sure it is not too small to keep the curve shape.
 
 Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
-localFile = 0; % Use 1 for 'YES' 
+localFile = 1; % Use 1 for 'YES' 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -201,7 +201,7 @@ fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp_nm)^2); % difference of squares 
 
 % electron density based on FWHM (ultimately from Plasma Diagnostics book,
 % used in Morken and Blasing's theses)
-n_e =  1e20 .* (sqrt(fwhm_calibrated)./0.04).^(3/2);
+n_e =  1e20 .* (fwhm_calibrated./0.04).^(3/2);
 fprintf('Electron density n_e = %4.2e /m^3\n',n_e)
 end
 
