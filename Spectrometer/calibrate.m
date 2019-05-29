@@ -39,7 +39,6 @@ function [pix2nm,offset, HBetaFWHM] = calibrate(grating, targetnm, doPlot, HImgP
 threshold = 25; % threshold intensity to identify peaks
 lineHeight =(303:653); % Vertical start-end location of line (pixels). If too large, may include optical aberrations of spectrometer such as curvatures.
 lineWidth = (685-630); % line width to take into account. Make sure it is not too small to keep the curve shape.
-doPlot = 0; % to plot intensity image
 HBetanm = 486.133; % constant value of H-Beta line in nm
 He492nm = 492.193; % constant value of He-492 line in nm 
 % wavelength values found from http://hyperphysics.phy-astr.gsu.edu/hbase/quantum/atspect.html

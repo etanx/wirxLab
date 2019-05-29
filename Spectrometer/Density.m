@@ -45,10 +45,10 @@ try
     if strcmp(answer, 'Yes') % if answer is equal to 'yes' (i.e. user wants new files) 
        
        %get Hydrogen and Helium calibration images 
-       [calHFile,calHPath] = uigetfile('.b16');
+       [calHFile,calHPath] = uigetfile('.b16', 'Pick a H Calibration Image');
        calHImg = fullfile(calHPath, calHFile); % full path and filename
        
-       [calHeFile,calHePath] = uigetfile('.b16');
+       [calHeFile,calHePath] = uigetfile('.b16', 'Pick a He Calibration Image');
        calHeImg = fullfile(calHePath, calHeFile);
     end
        % save paths to file to use next time (only if filepaths are correctly
@@ -59,13 +59,13 @@ catch
        % if error occured while loading file (i.e. no previous images
        % exist)
        uiwait(msgbox('Select New H and He Calibation Images','modal')); % tell user that he or she is selecting new images
-       [calHFile,calHPath] = uigetfile('.b16'); %  same as above
+       [calHFile,calHPath] = uigetfile('.b16', 'Pick a H Calibration Image'); %  same as above
        if calHPath == 0
         error('No hydrogen image to read.')
        end
        calHImg = fullfile(calHPath, calHFile);
        
-       [calHeFile,calHePath] = uigetfile('.b16');
+       [calHeFile,calHePath] = uigetfile('.b16', 'Pick a He Calibration Image');
        if calHePath == 0
         error('No helium image to read.')
        end
@@ -84,7 +84,7 @@ lineHeight =(320:645); % Vertical range of line (pixels). If too large, might in
 lineWidth = (685-630); % broadened line width to take into account. Make sure it is not too small to keep the curve shape.
 
 Hbeta2density = 1; % Use 1 for 'YES', 2 for 'NO'. Will calculate n_e if yes.
-localFile = 1; % Use 1 for 'YES' 
+localFile = 0; % Use 1 for 'YES' 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -202,6 +202,9 @@ fwhm_calibrated = sqrt((fwhm_nm)^2 - (fwhm_lamp_nm)^2); % difference of squares 
 % electron density based on FWHM (ultimately from Plasma Diagnostics book,
 % used in Morken and Blasing's theses)
 n_e =  1e20 .* (fwhm_calibrated./0.04).^(3/2);
+fprintf('Shot number: %.0f\n',shot)
+fprintf('H Calibration Image: %s\n',calHImg)
+fprintf('He Calibration Image: %s\n',calHeImg)
 fprintf('Electron density n_e = %4.2e /m^3\n',n_e)
 end
 
