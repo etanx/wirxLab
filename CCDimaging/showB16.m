@@ -1,5 +1,5 @@
 
-% raw2jpg: This function shows content of raw .b16 files
+% showB16.m: This function shows content of raw .b16 files
 % Ellie Tan, April 2019.
 
 clear all, close all
