@@ -17,7 +17,7 @@ f = figure;
 %fig = imagesc(flipud(img),clims)
 fig = imagesc(flipud(img));
 
-colormap 'jet'; %Use 'jet' for more interesting looking pictures.
+colormap 'gray'; %Use 'jet' for more interesting looking pictures.
 im=getframe; %Convert figure into a RGB image.
 filename=strcat(shot,'.png'); %Store picture 
 set(gca, 'Visible', 'off')

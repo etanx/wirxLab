@@ -9,9 +9,9 @@ function [] = plotB16(shot)
 % Get image file from tree
 mdsconnect('WIRX07');
 mdsopen('wirxtree',shot);
-%img = flipud(mdsvalue('ICCD.DICAM1:FRAME1')); % upside down image
+img = flipud(mdsvalue('ICCD.DICAM1:FRAME1')); % upside down image
 %(uncomment to use)
-img = mdsvalue('ICCD.DICAM1:FRAME1'); % normal image (comment out if upside down)
+%img = mdsvalue('ICCD.DICAM1:FRAME1'); % normal image (comment out if upside down)
 
 % get time, Ip, and B
 time = mdsvalue('ICCD.DICAM1:SETTINGS.FRAME1_TIME')
@@ -28,7 +28,7 @@ mdsdisconnect();
 %% Plot 
 f = figure;
 f = imagesc(img);
-colormap 'jet'; %Use 'jet' for more interesting looking pictures.
+colormap 'gray'; %Use 'jet' for more interesting looking pictures.
 set(gca, 'Visible', 'off')
 text(5,40,num2str(shot),'Color','white')
 
