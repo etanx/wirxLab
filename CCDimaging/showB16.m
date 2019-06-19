@@ -4,7 +4,7 @@
 
 clear all, close all
 
-shot = 1190000000; % input your shot number/run day/ other text for display
+shot = 1190617029; % input your shot number/run day/ other text for display
 
 % Get location of image file from user
 [fileName,fileFolder] = uigetfile(path); % select .b16 raw image file in GUI window
